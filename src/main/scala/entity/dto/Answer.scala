@@ -1,7 +1,7 @@
-package entities.dto
+package entity.dto
 
 import core.json.{*, given}
-import entities.*
+import entity.*
 
 sealed trait Answer:
   def questionId: QuestionId

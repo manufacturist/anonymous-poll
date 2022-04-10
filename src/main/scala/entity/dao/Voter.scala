@@ -1,9 +1,9 @@
-package entities.dao
+package entity.dao
 
-import entities.*
+import entity.*
 
 case class Voter(
-  pollId: PollId,
   code: SingleUseVoteCode,
+  pollId: PollId,
   email: EmailAddress
 )

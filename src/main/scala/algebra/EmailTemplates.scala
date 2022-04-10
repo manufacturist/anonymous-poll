@@ -1,7 +1,7 @@
 package algebra
 
 import config.*
-import entities.*
+import entity.*
 import org.http4s.Uri
 import port.email.Email
 

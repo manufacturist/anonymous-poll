@@ -5,8 +5,8 @@ CREATE TABLE poll(
 );
 
 CREATE TABLE voter(
-    poll_id     UUID            NOT NULL,
     code        UUID            PRIMARY KEY,
+    poll_id     UUID            NOT NULL,
     email       VARCHAR(254)    NOT NULL,
 
     FOREIGN KEY (poll_id) REFERENCES poll(id) ON DELETE CASCADE

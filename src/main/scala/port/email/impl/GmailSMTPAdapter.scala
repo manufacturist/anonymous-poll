@@ -1,7 +1,7 @@
 package port.email.impl
 
 import config.*
-import entities.*
+import entity.*
 import port.email.*
 import cats.effect.IO
 import cats.effect.std.Supervisor

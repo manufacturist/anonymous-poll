@@ -1,6 +1,6 @@
 import cats.effect.{IO, Resource}
 import ciris.*
-import entities.{ContentTemplate, EmailAddress, Password, SubjectTemplate}
+import entity.{ContentTemplate, EmailAddress, Password, SubjectTemplate}
 import monix.newtypes.HasBuilder
 
 package object config:

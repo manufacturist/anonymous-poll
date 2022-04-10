@@ -1,6 +1,6 @@
-package entities.dao
+package entity.dao
 
-import entities.*
+import entity.*
 
 import java.time.OffsetDateTime
 

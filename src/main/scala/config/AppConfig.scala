@@ -1,6 +1,6 @@
 package config
 
-import entities.*
+import entity.*
 
 final case class AppConfig(
   server: ServerConfig,
