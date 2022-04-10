@@ -1,12 +1,12 @@
 package db
- 
+
 import cats.effect.*
 import config.*
 import org.flywaydb.core.Flyway
-  
+
 object Migrator:
 
-  def apply()(using appConfig: AppConfig): IO[Unit] = IO.delay {
+  def migrate()(using appConfig: AppConfig): IO[Unit] = IO.delay {
     val dbConfig = appConfig.db
 
     val flywayConfig = Flyway
@@ -17,5 +17,3 @@ object Migrator:
     val flyway = new Flyway(flywayConfig)
     flyway.migrate()
   }
-
-    

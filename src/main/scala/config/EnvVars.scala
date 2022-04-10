@@ -1,3 +1,5 @@
+package config
+
 object EnvVars:
   val SERVER_HOST = "SERVER_HOST"
   val SERVER_PORT = "SERVER_PORT"

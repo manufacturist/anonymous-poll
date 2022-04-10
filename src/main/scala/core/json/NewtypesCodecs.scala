@@ -13,9 +13,7 @@ trait NewtypesCodecs {
   given [New, Base](using HasBuilder.Aux[New, Base], Decoder[Base]): Decoder[New] =
     jsonDecode(_)
 
-  protected def jsonDecode[T, S](
-    c: HCursor
-  )(implicit builder: HasBuilder.Aux[T, S], dec: Decoder[S]): Decoder.Result[T] =
+  protected def jsonDecode[T, S](c: HCursor)(using builder: HasBuilder.Aux[T, S], dec: Decoder[S]): Decoder.Result[T] =
     dec.apply(c).flatMap { value =>
       builder.build(value) match {
         case value @ Right(_) =>

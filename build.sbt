@@ -1,23 +1,23 @@
-val scala3Version = "3.1.1"
-val catsV         = "3.3.11"
-val circeV        = "0.14.1"
-val cirisV        = "2.3.2"
-val doobieV       = "1.0.0-RC2"
-val flywayV       = "8.5.7"
-val h2V           = "2.1.210"
-val http4sV       = "0.23.11"
-val log4catsV     = "2.2.0"
-val logbackV      = "1.2.11"
-val munitV        = "0.7.29"
-val newtypesV     = "0.2.1"
-val tapirV        = "1.0.0-M6"
+val scala3V   = "3.1.1"
+val catsV     = "3.3.11"
+val circeV    = "0.14.1"
+val cirisV    = "2.3.2"
+val doobieV   = "1.0.0-RC2"
+val flywayV   = "8.5.7"
+val h2V       = "2.1.210"
+val http4sV   = "0.23.11"
+val log4catsV = "2.2.0"
+val logbackV  = "1.2.11"
+val munitV    = "0.7.29"
+val newtypesV = "0.2.1"
+val tapirV    = "1.0.0-M6"
 
 lazy val root = project
   .in(file("."))
   .settings(
     name         := "anonymous-poll",
     version      := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
+    scalaVersion := scala3V,
     libraryDependencies ++= Seq(
       // Configuration
       "is.cir" %% "ciris" % cirisV withSources (),

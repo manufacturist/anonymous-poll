@@ -11,7 +11,7 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
 
 object AnonymousPollServer extends IOApp.Simple:
 
-  def run: IO[Unit] = bindAll.use { (server, serverConfig, logger) =>
+  def run: IO[Unit] = scaffoldServer.use { (server, serverConfig, logger) =>
     for
       _ <- IO(server) // TODO: Start
       _ <- logger.info(s"Server running on $serverConfig...")
@@ -19,30 +19,17 @@ object AnonymousPollServer extends IOApp.Simple:
     yield ()
   }
 
-  private val bindAll =
+  private val scaffoldServer =
     for
-      given Logger       <- Resource.eval(Slf4jLogger.create[IO])
+      logger <- Resource.eval(Slf4jLogger.create[IO])
+
+      given Logger = logger
       given AppConfig    <- appConfigResource
       given DbTransactor <- DbTransactor.buildTransactor()
 
       _ <- Resource.eval {
-        Migrator() *> summon[Logger].info("Migration successful...")
+        Migrator.migrate() *> logger.info("Migration successful...")
       }
 
       server <- Resource.eval(IO.unit)
-    yield (server, summon[AppConfig].server, summon[Logger])
-
-  private val appConfigResource: Resource[IO, AppConfig] =
-    for
-      host                <- env(EnvVars.SERVER_HOST).resource[IO]
-      port                <- env(EnvVars.SERVER_PORT).as[Int].resource[IO]
-      inviteToPollSubject <- env(EnvVars.INVITE_TO_POLL_SUBJECT).as[SubjectTemplate].resource[IO]
-      inviteToPollContent <- env(EnvVars.INVITE_TO_POLL_CONTENT).as[ContentTemplate].resource[IO]
-      gmailUsername       <- env(EnvVars.GMAIL_USERNAME).as[EmailAddress].resource[IO]
-      gmailPassword       <- env(EnvVars.GMAIL_PASSWORD).as[Password].resource[IO]
-    yield AppConfig(
-      server = ServerConfig(host, port),
-      db = DatabaseConfig("anonymous_poll", "foo", "bar", "sql/v1" :: Nil),
-      email = EmailTemplatesConfig(inviteToPollSubject, inviteToPollContent),
-      smtp = SMTPConfig(gmailUsername, gmailPassword)
-    )
+    yield (server, summon[AppConfig].server, logger)
