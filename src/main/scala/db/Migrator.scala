@@ -13,6 +13,7 @@ object Migrator:
       .configure()
       .dataSource(dbConfig.h2Url, dbConfig.username, dbConfig.password)
       .locations(dbConfig.locations*)
+      .validateMigrationNaming(true)
 
     val flyway = new Flyway(flywayConfig)
     flyway.migrate()

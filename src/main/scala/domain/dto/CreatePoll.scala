@@ -1,9 +1,11 @@
-package domain
+package domain.dto
 
 import core.json.{*, given}
+import domain.*
+import domain.dto.*
 
 case class CreatePoll(
-  recipients: List[EmailAddress],
+  recipients: Set[EmailAddress],
   questions: List[Question]
 )
 

@@ -1,6 +1,8 @@
-package domain
+package domain.dto
 
 import core.json.{*, given}
+import domain.*
+import domain.dto.*
 
 sealed trait Question
 

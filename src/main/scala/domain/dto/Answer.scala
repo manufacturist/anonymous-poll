@@ -1,6 +1,7 @@
-package domain
+package domain.dto
 
 import core.json.{*, given}
+import domain.*
 
 sealed trait Answer:
   def questionId: QuestionId

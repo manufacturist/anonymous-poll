@@ -13,6 +13,9 @@ package object domain:
   object QuestionId extends NewsubtypeWrapped[UUID]
   type QuestionId = QuestionId.Type
 
+  enum QuestionType:
+    case Choice, Number, OpenEnd
+
   object Text extends NewsubtypeWrapped[String]
   type Text = Text.Type
 
@@ -30,14 +33,13 @@ package object domain:
 
   type Template = Template.Type
   object Template extends NewsubtypeWrapped[String] {
-    extension (template: Template)
-      def render(elements: List[Any]): String = template.format(elements*)
+    extension (template: Template) def render(elements: List[Any]): String = template.format(elements*)
   }
 
-  object SubjectTemplate extends NewsubtypeWrapped[Template] 
+  object SubjectTemplate extends NewsubtypeWrapped[Template]
   type SubjectTemplate = SubjectTemplate.Type
 
-  object ContentTemplate extends NewsubtypeWrapped[Template] 
+  object ContentTemplate extends NewsubtypeWrapped[Template]
   type ContentTemplate = ContentTemplate.Type
 
   object SingleUseVoteCode extends NewsubtypeWrapped[String]
