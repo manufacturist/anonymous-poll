@@ -1,6 +1,6 @@
 package port.email
 
-import domain.*
+import entities.*
 
 // Extend to suit the business logic needs
 trait Email:

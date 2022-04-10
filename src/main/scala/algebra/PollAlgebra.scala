@@ -1,8 +1,8 @@
 package algebra
 
-import domain.*
+import entities.*
 import cats.effect.IO
-import domain.dto.{Answer, CreatePoll}
+import entities.dto.{Answer, CreatePoll}
 
 trait PollAlgebra:
 

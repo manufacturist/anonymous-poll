@@ -2,7 +2,7 @@ import monix.newtypes.NewsubtypeWrapped
 import java.util.UUID
 import scala.quoted.Varargs
 
-package object domain:
+package object entities:
 
   object PollId extends NewsubtypeWrapped[UUID]
   type PollId = PollId.Type

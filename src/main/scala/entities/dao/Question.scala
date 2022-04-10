@@ -1,6 +1,6 @@
-package domain.dao
+package entities.dao
 
-import domain.*
+import entities.*
 
 case class Question(
   id: QuestionId,

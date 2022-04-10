@@ -4,7 +4,7 @@ import ciris.*
 import config.{*, given}
 import core.*
 import db.*
-import domain.*
+import entities.*
 import monix.newtypes.HasBuilder
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.SelfAwareStructuredLogger

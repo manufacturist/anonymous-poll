@@ -1,8 +1,8 @@
-package domain.dto
+package entities.dto
 
 import core.json.{*, given}
-import domain.PollId
-import domain.dto.*
+import entities.PollId
+import entities.dto.*
 
 case class AnswerPoll(
   pollId: PollId,

@@ -1,6 +1,6 @@
-package domain.dao
+package entities.dao
 
-import domain.*
+import entities.*
 
 import java.time.OffsetDateTime
 

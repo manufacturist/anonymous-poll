@@ -1,10 +1,10 @@
 package algebra.impl
 
 import config.*
-import domain.*
+import entities.*
 import algebra.PollAlgebra
 import cats.effect.IO
-import domain.dto.{Answer, CreatePoll}
+import entities.dto.{Answer, CreatePoll}
 
 class PollAlgebraImpl()(using config: AppConfig) extends PollAlgebra:
 

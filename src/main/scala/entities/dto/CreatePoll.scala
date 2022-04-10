@@ -1,8 +1,8 @@
-package domain.dto
+package entities.dto
 
 import core.json.{*, given}
-import domain.*
-import domain.dto.*
+import entities.*
+import entities.dto.*
 
 case class CreatePoll(
   recipients: Set[EmailAddress],
