@@ -4,10 +4,10 @@ import core.json.{*, given}
 import entities.*
 import entities.dto.*
 
-case class CreatePoll(
+case class PollCreate(
   recipients: Set[EmailAddress],
   questions: List[Question]
 )
 
-object CreatePoll:
-  given Codec[CreatePoll] = deriveCodec
+object PollCreate:
+  given Codec[PollCreate] = deriveCodec
