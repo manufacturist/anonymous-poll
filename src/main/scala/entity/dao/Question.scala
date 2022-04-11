@@ -3,11 +3,11 @@ package entity.dao
 import entity.*
 
 case class Question(
-  id: QuestionId,
   pollId: PollId,
+  number: QuestionNumber,
   text: Text,
   `type`: QuestionType,
-  picks: Option[List[Text]],
+  picks: List[Text],
   minimum: Option[Int],
   maximum: Option[Int]
 )

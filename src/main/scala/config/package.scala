@@ -1,7 +1,8 @@
-import cats.effect.{IO, Resource}
+import cats.effect.*
 import ciris.*
-import entity.{ContentTemplate, EmailAddress, Password, SubjectTemplate}
+import entity.*
 import monix.newtypes.HasBuilder
+import org.http4s.Uri
 
 package object config:
 
@@ -17,6 +18,7 @@ package object config:
     for
       host                <- env(EnvVars.SERVER_HOST).resource[IO]
       port                <- env(EnvVars.SERVER_PORT).as[Int].resource[IO]
+      baseUri             <- env(EnvVars.FRONTEND_BASE_URI).as[String].map(Uri.unsafeFromString).resource[IO]
       inviteToPollSubject <- env(EnvVars.INVITE_TO_POLL_SUBJECT).as[SubjectTemplate].resource[IO]
       inviteToPollContent <- env(EnvVars.INVITE_TO_POLL_CONTENT).as[ContentTemplate].resource[IO]
       gmailUsername       <- env(EnvVars.GMAIL_USERNAME).as[EmailAddress].resource[IO]
@@ -26,6 +28,7 @@ package object config:
         host = host,
         port = port
       ),
+      frontendUris = FrontendUris(baseUri),
       db = DatabaseConfig(
         name = "anonymous_poll",
         username = "foo",

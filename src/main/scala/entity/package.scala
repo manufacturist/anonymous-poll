@@ -10,8 +10,8 @@ package object entity:
   object PollName extends NewsubtypeWrapped[String]
   type PollName = PollName.Type
 
-  object QuestionId extends NewsubtypeWrapped[UUID]
-  type QuestionId = QuestionId.Type
+  object QuestionNumber extends NewsubtypeWrapped[Int]
+  type QuestionNumber = QuestionNumber.Type
 
   enum QuestionType:
     case Choice, Number, OpenEnd
@@ -33,7 +33,9 @@ package object entity:
 
   type Template = Template.Type
   object Template extends NewsubtypeWrapped[String] {
-    extension (template: Template) def render(elements: List[Any]): String = template.format(elements*)
+    extension (template: Template)
+      def render(elements: List[Any]): String =
+        template.format(elements*)
   }
 
   object SubjectTemplate extends NewsubtypeWrapped[Template]

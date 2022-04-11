@@ -2,12 +2,14 @@ package algebra
 
 import entity.*
 import cats.effect.IO
-import entity.dto.{Answer, PollCreate}
+import entity.dto.*
 
 trait PollAlgebra:
 
   def create(poll: PollCreate): IO[Unit]
 
+  def findPollByCode(code: SingleUseVoteCode): IO[Option[PollView]]
+
   def answer(code: SingleUseVoteCode, answers: List[Answer]): IO[Unit]
 
-  def retrieveAnonymousResults(pollId: PollId): IO[Unit]
+  def retrieveAnonymousResults(pollId: PollId): IO[List[AnsweredQuestionView]]

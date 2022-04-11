@@ -1,8 +1,10 @@
 package db
 
+import doobie.Meta
 import doobie.enumerated.JdbcType
 import doobie.h2.Instances
 import doobie.util.meta.*
+import entity.*
 import monix.newtypes.*
 
 trait Composites extends MetaConstructors with MetaInstances with Instances:
@@ -24,3 +26,9 @@ trait Composites extends MetaConstructors with MetaInstances with Instances:
       put = _.setObject(_, _),
       update = _.updateObject(_, _)
     )
+
+  given Meta[QuestionType] =
+    StringMeta.imap(QuestionType.valueOf)(_.toString)
+
+  given Meta[List[Text]] =
+    unliftedStringArrayType.imap(_.toList.map(Text(_)))(_.map(identity).toArray)

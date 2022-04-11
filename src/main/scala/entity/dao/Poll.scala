@@ -6,6 +6,6 @@ import java.time.OffsetDateTime
 
 case class Poll(
   id: PollId,
-  name: Text,
+  name: PollName,
   createdAt: OffsetDateTime
 )

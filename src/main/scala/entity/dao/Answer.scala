@@ -4,8 +4,8 @@ import entity.*
 
 case class Answer(
   pollId: PollId,
-  questionId: QuestionId,
+  questionNumber: QuestionNumber,
   email: EmailAddress,
-  answers: Option[List[String]],
-  number: Int
+  answers: List[Text],
+  number: Option[Int]
 )
