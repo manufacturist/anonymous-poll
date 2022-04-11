@@ -5,7 +5,9 @@ import entity.*
 import entity.dto.*
 
 case class PollAnswer(
-  pollId: PollId,
   code: SingleUseVoteCode,
   answers: List[Answer]
 )
+
+object PollAnswer:
+  given Codec[PollAnswer] = deriveCodec

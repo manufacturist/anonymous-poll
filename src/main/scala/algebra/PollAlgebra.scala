@@ -6,7 +6,7 @@ import entity.dto.*
 
 trait PollAlgebra:
 
-  def create(poll: PollCreate): IO[Unit]
+  def create(poll: PollCreate): IO[PollView]
 
   def findPollByCode(code: SingleUseVoteCode): IO[Option[PollView]]
 

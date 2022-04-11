@@ -15,8 +15,8 @@ trait DbTransactor:
     doobieProgram.attemptSql
       .transact(transactor)
       .flatMap {
-        case Left(anomaly) => IO.raiseError[A](anomaly)
-        case Right(x)      => IO.pure[A](x)
+        case Left(error)   => IO.raiseError[A](error)
+        case Right(result) => IO.pure[A](result)
       }
 
 object DbTransactor:
@@ -27,8 +27,8 @@ object DbTransactor:
       hikariTransactor <- HikariTransactor.newHikariTransactor[IO](
         driverClassName = "org.h2.Driver",
         url = config.db.h2Url,
-        user = "foo",
-        pass = "foo",
+        user = config.db.username,
+        pass = config.db.password,
         connectEC = fixedThreadPool
       )
     yield new DbTransactor {

@@ -21,13 +21,13 @@ import java.time.*
 class PollAlgebraImpl(
   pollSql: PollSql,
   voterSql: VoterSql,
-  questionSql: QuestionSql,
-  emailPort: EmailPort
+  questionSql: QuestionSql
 )(using
   config: AppConfig,
   logger: Logger,
   dbTransactor: DbTransactor,
-  supervisor: Supervisor[IO]
+  supervisor: Supervisor[IO],
+  emailPort: EmailPort
 ) extends PollAlgebra:
 
   // TODO: Move to a syntax package
@@ -38,7 +38,7 @@ class PollAlgebraImpl(
         case None    => F.raiseError(ifNone)
       }
 
-  override def create(poll: PollCreate): IO[Unit] =
+  override def create(poll: PollCreate): IO[PollView] =
     for
       pollId <- UUIDGen[IO].randomUUID.map(PollId(_))
       now <- Clock[IO].realTime.map(rt => OffsetDateTime.ofInstant(Instant.ofEpochMilli(rt.toMillis), ZoneOffset.UTC))
@@ -102,7 +102,11 @@ class PollAlgebraImpl(
       }.sequence
 
       _ <- dbTransactor.interpret(doobieProgram)
-    yield ()
+    yield PollView(
+      id = newPoll.id,
+      name = newPoll.name,
+      questions = newQuestions.map(QuestionView.apply)
+    )
 
   override def findPollByCode(code: SingleUseVoteCode): IO[Option[PollView]] =
     dbTransactor.interpret(pollSql.findPollByCode(code))

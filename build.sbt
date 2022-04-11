@@ -53,7 +53,7 @@ lazy val root = project
       "com.softwaremill.sttp.tapir" %% "tapir-core"               % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-cats"               % tapirV withSources (),
-      "com.softwaremill.sttp.tapir" %% "tapir-server"             % tapirV withSources (),
+      "com.softwaremill.sttp.tapir" %% "tapir-http4s-server"      % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-client"             % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"       % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml" % tapirV withSources (),

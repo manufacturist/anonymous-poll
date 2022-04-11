@@ -29,9 +29,6 @@ trait PollSql:
         )
       }.headOption)
 
-  def retrieveResults(pollId: PollId): ConnectionIO[Int] =
-    ???
-
 private[query] object PollQueries extends Composites:
   def insert(poll: Poll): Update0 =
     import poll.*

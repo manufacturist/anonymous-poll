@@ -26,12 +26,12 @@ CREATE TABLE question(
 );
 
 CREATE TABLE answer(
-    poll_id         UUID            NOT NULL,
-    number          INTEGER         NOT NULL,
-    email_address   VARCHAR(254)    NOT NULL,
-    answers         VARCHAR ARRAY   NOT NULL DEFAULT '{}',
-    number          INTEGER         NULL,
+    poll_id             UUID            NOT NULL,
+    question_number     INTEGER         NOT NULL,
+    email_address       VARCHAR(254)    NOT NULL,
+    answers             VARCHAR ARRAY   NOT NULL DEFAULT '{}',
+    number              INTEGER         NULL,
 
-    FOREIGN KEY (poll_id) REFERENCES poll(id) ON DELETE CASCADE,
-    FOREIGN KEY (question_id) REFERENCES question(id)
+    PRIMARY KEY (poll_id, question_number, email_address),
+    FOREIGN KEY (poll_id) REFERENCES poll(id) ON DELETE CASCADE
 );

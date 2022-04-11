@@ -28,10 +28,14 @@ private[query] object QuestionQueries extends Composites:
     Update[Question](sql)
 
   val insertAnswer: Update[Answer] =
-    val sql = "INSERT INTO answer (poll_id, number, email_address, answers, number) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    val sql =
+      """INSERT INTO answer (poll_id, question_number, email_address, answers, number) 
+        |VALUES (?, ?, ?, ?, ?, ?, ?)""".stripMargin
+
     Update[Answer](sql)
 
   def selectAnswerWherePollId(eqPollId: PollId): Query0[(QuestionView, Answer)] =
-    sql"""SELECT q.number, q.type, q.text, a.poll_id, a.number, a.email_address, a.answers, a.number FROM answer AS a
+    sql"""SELECT q.number, q.type, q.text, a.poll_id, a.question_number, a.email_address, a.answers, a.number 
+         |FROM answer AS a
          |JOIN question AS q ON q.poll_id = a.poll_id
          |WHERE poll_id = $eqPollId""".query[(QuestionView, Answer)]
