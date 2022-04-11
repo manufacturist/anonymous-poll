@@ -17,7 +17,7 @@ case class ServerConfig(host: String, port: Int):
 end ServerConfig
 
 case class FrontendUris(baseUri: Uri):
-  def pollRetrievalUri(code: SingleUseVoteCode): Uri = baseUri / "poll" / code.toString
+  def pollRetrievalUri(code: SingleUseVoteCode): Uri = baseUri / "poll" +? ("code", code.toString)
 end FrontendUris
 
 case class EmailTemplatesConfig(inviteToPollSubject: SubjectTemplate, inviteToPollContent: ContentTemplate)
