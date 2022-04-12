@@ -19,7 +19,7 @@ final class SmokeSpecs extends CatsEffectSuite:
 
   test("server should start") {
     val baseUri            = localAppConfig.server.serverUri
-    val (healthRequest, _) = clientInterpreter.toRequest(HealthEndpoint.health, Some(baseUri))(())
+    val (healthRequest, _) = clientInterpreter.toRequest(HealthEndpoint.health, baseUri = Some(baseUri))(())
 
     for
       client: Client[IO] <- IO(clientFixture())
