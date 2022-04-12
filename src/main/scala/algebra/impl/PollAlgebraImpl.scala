@@ -114,7 +114,7 @@ class PollAlgebraImpl(
   override def answer(code: SingleUseVoteCode, answers: List[AnswerDto]): IO[Unit] =
     val doobieProgram = for
       pollView <- pollSql.findPollByCode(code).unpack(new RuntimeException("Poll not found"))
-      voter    <- voterSql.findVoter(code).unpack(new RuntimeException("Voter not found"))
+      voter    <- voterSql.findVoterByCode(code).unpack(new RuntimeException("Voter not found"))
 
       _ <-
         if pollView.questions.size == answers.size then DoobieIO.unit

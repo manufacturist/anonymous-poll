@@ -22,7 +22,7 @@ final class QuestionSqlSpec() extends TransactorFixtureSuite:
     check(QuestionQueries.insertQuestion.toUpdate0(question))
   }
 
-  test("insertQuestion (Choice)") {
+  test("insertQuestion (Number)") {
     val question = Question(
       pollId = pollId,
       number = QuestionNumber(0),

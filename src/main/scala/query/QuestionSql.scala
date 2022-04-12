@@ -30,7 +30,7 @@ private[query] object QuestionQueries extends Composites:
   val insertAnswer: Update[Answer] =
     val sql =
       """INSERT INTO answer (poll_id, question_number, email_address, answers, number) 
-        |VALUES (?, ?, ?, ?, ?, ?, ?)""".stripMargin
+        |VALUES (?, ?, ?, ?, ?)""".stripMargin
 
     Update[Answer](sql)
 
