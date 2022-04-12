@@ -14,7 +14,9 @@ val tapirV           = "1.0.0-M6"
 
 lazy val root = project
   .in(file("."))
+  .configs(IntegrationTest)
   .settings(
+    Defaults.itSettings,
     name         := "anonymous-poll",
     version      := "0.1.0-SNAPSHOT",
     scalaVersion := scala3V,
@@ -55,7 +57,7 @@ lazy val root = project
       "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-cats"               % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-http4s-server"      % tapirV withSources (),
-      "com.softwaremill.sttp.tapir" %% "tapir-client"             % tapirV withSources (),
+      "com.softwaremill.sttp.tapir" %% "tapir-http4s-client"      % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"       % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml" % tapirV withSources (),
       "com.softwaremill.sttp.tapir" %% "tapir-redoc"              % tapirV withSources (),

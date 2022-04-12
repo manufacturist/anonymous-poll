@@ -1,5 +1,6 @@
 package config
 
+import ciris.ConfigDecoder
 import entity.*
 import org.http4s.Uri
 
@@ -7,8 +8,8 @@ final case class AppConfig(
   server: ServerConfig,
   frontendUris: FrontendUris,
   db: DatabaseConfig,
-  email: EmailTemplatesConfig,
-  smtp: SMTPConfig
+  emailTemplates: EmailTemplatesConfig,
+  emailPort: EmailPortConfig
 )
 end AppConfig
 
@@ -23,8 +24,26 @@ end FrontendUris
 case class EmailTemplatesConfig(inviteToPollSubject: SubjectTemplate, inviteToPollContent: ContentTemplate)
 end EmailTemplatesConfig
 
-case class SMTPConfig(username: EmailAddress, password: String)
+enum EmailPortStrategy:
+  case Gmail, NoOp
+
+object EmailPortStrategy:
+  given ConfigDecoder[String, EmailPortStrategy] =
+    ConfigDecoder.instance[String, EmailPortStrategy] { (_, value) => Right(EmailPortStrategy.valueOf(value)) }
+
+sealed trait EmailConfig
+
+case class SMTPConfig(username: EmailAddress, password: String) extends EmailConfig
 end SMTPConfig
+
+case object NoOpEmailConfig extends EmailConfig
+end NoOpEmailConfig
+
+case class EmailPortConfig(
+  strategy: EmailPortStrategy,
+  adapterConfig: EmailConfig
+)
+end EmailPortConfig
 
 case class DatabaseConfig(
   name: String,

@@ -4,7 +4,7 @@ import cats.effect.*
 import cats.effect.implicits.*
 import cats.effect.std.Supervisor
 import ciris.*
-import port.email.EmailPort
+import port.email.{EmailPort, EmailPortFactory}
 import port.email.impl.GmailSMTPAdapter
 import com.comcast.ip4s.*
 import config.{*, given}
@@ -31,7 +31,7 @@ object AnonymousPollServer extends ResourceApp.Forever:
 
       given DbTransactor   <- DbTransactor.buildTransactor()
       given Supervisor[IO] <- Supervisor[IO]
-      given EmailPort      <- GmailSMTPAdapter(summon[AppConfig].smtp)
+      given EmailPort      <- EmailPortFactory(summon[AppConfig].emailPort)
 
       _ <- Resource.eval {
         Migrator.migrate(config.db) *> logger.info("Migration successful...")
