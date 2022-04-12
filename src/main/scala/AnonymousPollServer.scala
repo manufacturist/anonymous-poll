@@ -16,7 +16,7 @@ import org.http4s.server.Router
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import query.{PollSql, QuestionSql, VoterSql}
-import routes.{DocRoutes, PollRoutes}
+import routes.{DocRoutes, HealthRoutes, PollRoutes}
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 object AnonymousPollServer extends ResourceApp.Forever:
@@ -31,7 +31,7 @@ object AnonymousPollServer extends ResourceApp.Forever:
 
       given DbTransactor   <- DbTransactor.buildTransactor()
       given Supervisor[IO] <- Supervisor[IO]
-      given EmailPort      <- EmailPortFactory(summon[AppConfig].emailPort)
+      given EmailPort      <- EmailPortFactory(config.emailPort)
 
       _ <- Resource.eval {
         Migrator.migrate(config.db) *> logger.info("Migration successful...")
@@ -41,10 +41,11 @@ object AnonymousPollServer extends ResourceApp.Forever:
         val pollAlgebra: PollAlgebra = new PollAlgebraImpl(PollSql, VoterSql, QuestionSql)
         val pollRoutes: PollRoutes   = new PollRoutes(pollAlgebra)
 
-        val redocEndpoints = DocRoutes.generateForRedoc(pollRoutes.serverEndpoints)
-        val routes         = Http4sServerInterpreter[IO]().toRoutes(pollRoutes.serverEndpoints ++ redocEndpoints)
+        val apiEndpoints  = pollRoutes.serverEndpoints :+ HealthRoutes.healthEndpoint
+        val docsEndpoints = DocRoutes.generateForRedoc(apiEndpoints)
+        val httpRoutes    = Http4sServerInterpreter[IO]().toRoutes(apiEndpoints ++ docsEndpoints)
 
-        Router("/" -> routes).orNotFound
+        Router("/" -> httpRoutes).orNotFound
       }
 
       _ <- Resource.eval(logger.info(s"Redoc link at http://127.0.0.1:1337/api/public/redoc"))

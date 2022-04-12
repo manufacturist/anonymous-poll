@@ -3,6 +3,10 @@ import sttp.tapir.generic.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 
 package object endpoint extends Tapir with TapirJsonCirce with TapirSchemasAndCodecs:
+
+  val version: Int                                        = 1
+  val baseEndpoint: Endpoint[Unit, Unit, Unit, Unit, Any] = endpoint.prependIn("api" / s"v$version")
+
   val Uri: org.http4s.Uri.type                     = org.http4s.Uri
   val Request: org.http4s.Request.type             = org.http4s.Request
   val Response: org.http4s.Response.type           = org.http4s.Response

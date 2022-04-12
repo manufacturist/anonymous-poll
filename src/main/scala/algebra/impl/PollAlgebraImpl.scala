@@ -69,7 +69,7 @@ class PollAlgebraImpl(
 
         Question(
           pollId = pollId,
-          number = QuestionNumber(index),
+          number = QuestionNumber(index + 1),
           text = question.text,
           `type` = questionType,
           picks = picks,
