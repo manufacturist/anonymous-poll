@@ -15,6 +15,8 @@ end AppConfig
 
 case class ServerConfig(host: String, port: Int):
   override def toString: String = s"$host:$port"
+
+  def serverUri: Uri = Uri.unsafeFromString(s"http://${this.toString}")
 end ServerConfig
 
 case class FrontendUris(baseUri: Uri):

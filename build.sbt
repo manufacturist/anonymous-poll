@@ -66,7 +66,7 @@ lazy val root = project
       "com.sun.mail" % "javax.mail" % "1.6.2" withSources (),
 
       // Testing
-      "org.typelevel" %% "munit-cats-effect-3" % munitCatsEffectV % Test,
+      "org.typelevel" %% "munit-cats-effect-3" % munitCatsEffectV % "test, it",
 
       // Logging
       "org.typelevel" %% "log4cats-slf4j"  % log4catsV withSources (),

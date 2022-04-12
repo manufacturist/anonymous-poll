@@ -15,7 +15,7 @@ trait TransactorFixtureSuite extends CatsEffectSuite with doobie.munit.IOChecker
   private val user     = "foo"
   private val pass     = "bar"
 
-  val pollId = PollId(UUID.fromString("cd2c7abf-bc44-4f3e-95b5-66ebbddebf38"))
+  val pollId: PollId = PollId(UUID.fromString("cd2c7abf-bc44-4f3e-95b5-66ebbddebf38"))
 
   val transactor: doobie.Transactor[IO] = Transactor.fromDriverManager[IO](
     driver = "org.h2.Driver",
