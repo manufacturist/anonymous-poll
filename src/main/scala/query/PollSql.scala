@@ -29,10 +29,13 @@ trait PollSql:
         )
       }.headOption)
 
+  def deletePoll(pollId: PollId): ConnectionIO[Int] =
+    PollQueries.deletePollWherePollId(eqPollId = pollId).run
+
 private[query] object PollQueries extends Composites:
   def insert(poll: Poll): Update0 =
     import poll.*
-    sql"INSERT INTO poll ($id, $name, $createdAt)".update
+    sql"INSERT INTO poll (id, name, created_at) VALUES ($id, $name, $createdAt)".update
 
   def selectPollWhereVoterCode(eqCode: SingleUseVoteCode): Query0[(PollId, PollName, QuestionView)] =
     sql"""SELECT p.id, p.name, q.number, q.type, q.text
@@ -41,3 +44,6 @@ private[query] object PollQueries extends Composites:
          |JOIN question AS q ON p.id = q.poll_id  
          |WHERE v.code = $eqCode
          |""".stripMargin.query[(PollId, PollName, QuestionView)]
+
+  def deletePollWherePollId(eqPollId: PollId): Update0 =
+    sql"DELETE FROM poll WHERE id = $eqPollId".update

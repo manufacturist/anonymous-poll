@@ -6,9 +6,7 @@ import org.flywaydb.core.Flyway
 
 object Migrator:
 
-  def migrate()(using appConfig: AppConfig): IO[Unit] = IO.delay {
-    val dbConfig = appConfig.db
-
+  def migrate(dbConfig: DatabaseConfig): IO[Unit] = IO.delay {
     val flywayConfig = Flyway
       .configure()
       .dataSource(dbConfig.h2Url, dbConfig.username, dbConfig.password)

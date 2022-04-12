@@ -34,7 +34,7 @@ object AnonymousPollServer extends ResourceApp.Forever:
       given EmailPort      <- GmailSMTPAdapter(summon[AppConfig].smtp)
 
       _ <- Resource.eval {
-        Migrator.migrate() *> logger.info("Migration successful...")
+        Migrator.migrate(config.db) *> logger.info("Migration successful...")
       }
 
       httpApp = {

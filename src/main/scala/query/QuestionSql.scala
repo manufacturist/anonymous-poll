@@ -38,4 +38,4 @@ private[query] object QuestionQueries extends Composites:
     sql"""SELECT q.number, q.type, q.text, a.poll_id, a.question_number, a.email_address, a.answers, a.number 
          |FROM answer AS a
          |JOIN question AS q ON q.poll_id = a.poll_id
-         |WHERE poll_id = $eqPollId""".query[(QuestionView, Answer)]
+         |WHERE a.poll_id = $eqPollId""".stripMargin.query[(QuestionView, Answer)]

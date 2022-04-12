@@ -20,7 +20,7 @@ trait Composites extends MetaConstructors with MetaInstances with Instances:
 
   given Meta[java.time.OffsetDateTime] =
     Basic.one[java.time.OffsetDateTime](
-      jdbcType = JdbcType.Timestamp,
+      jdbcType = JdbcType.TimestampWithTimezone,
       jdbcSourceSecondary = List(JdbcType.Char, JdbcType.VarChar, JdbcType.LongVarChar, JdbcType.Date, JdbcType.Time),
       get = _.getObject(_, classOf[java.time.OffsetDateTime]),
       put = _.setObject(_, _),
@@ -31,4 +31,4 @@ trait Composites extends MetaConstructors with MetaInstances with Instances:
     StringMeta.imap(QuestionType.valueOf)(_.toString)
 
   given Meta[List[Text]] =
-    unliftedStringArrayType.imap(_.toList.map(Text(_)))(_.map(identity).toArray)
+    unliftedStringArrayType.timap(_.toList.map(Text(_)))(_.map(_.value).toArray)

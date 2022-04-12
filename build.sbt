@@ -1,16 +1,16 @@
-val scala3V   = "3.1.1"
-val catsV     = "3.3.11"
-val circeV    = "0.14.1"
-val cirisV    = "2.3.2"
-val doobieV   = "1.0.0-RC2"
-val flywayV   = "8.5.7"
-val h2V       = "2.1.210"
-val http4sV   = "0.23.11"
-val log4catsV = "2.2.0"
-val logbackV  = "1.2.11"
-val munitV    = "0.7.29"
-val newtypesV = "0.2.1"
-val tapirV    = "1.0.0-M6"
+val scala3V          = "3.1.1"
+val catsV            = "3.3.11"
+val circeV           = "0.14.1"
+val cirisV           = "2.3.2"
+val doobieV          = "1.0.0-RC2"
+val flywayV          = "8.5.7"
+val h2V              = "2.1.210"
+val http4sV          = "0.23.11"
+val log4catsV        = "2.2.0"
+val logbackV         = "1.2.11"
+val munitCatsEffectV = "1.0.7"
+val newtypesV        = "0.2.1"
+val tapirV           = "1.0.0-M6"
 
 lazy val root = project
   .in(file("."))
@@ -36,6 +36,7 @@ lazy val root = project
       "org.tpolecat" %% "doobie-core"   % doobieV withSources (),
       "org.tpolecat" %% "doobie-hikari" % doobieV withSources (),
       "org.tpolecat" %% "doobie-h2"     % doobieV withSources (),
+      "org.tpolecat" %% "doobie-munit"  % doobieV withSources (),
 
       // Database migration
       "org.flywaydb" % "flyway-core" % flywayV withSources (),
@@ -63,7 +64,7 @@ lazy val root = project
       "com.sun.mail" % "javax.mail" % "1.6.2" withSources (),
 
       // Testing
-      "org.scalameta" %% "munit" % munitV % Test withSources (),
+      "org.typelevel" %% "munit-cats-effect-3" % munitCatsEffectV % Test,
 
       // Logging
       "org.typelevel" %% "log4cats-slf4j"  % log4catsV withSources (),

@@ -16,7 +16,7 @@ final class GmailSMTPAdapter(config: SMTPConfig, mailSession: Session)(using Sup
     val send = connectedTransportResource.use { transport =>
       for
         message <- createMimeMessage(email.to, email.subject, email.content)
-        _       <- IO.delay(transport.sendMessage(message, message.getAllRecipients))
+        _       <- IO.blocking(transport.sendMessage(message, message.getAllRecipients))
       yield ()
     }
 
