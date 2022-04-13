@@ -17,9 +17,10 @@ lazy val root = project
   .configs(IntegrationTest)
   .settings(
     Defaults.itSettings,
-    name         := "anonymous-poll",
-    version      := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3V,
+    name                                := "anonymous-poll",
+    version                             := "0.1.0-SNAPSHOT",
+    scalaVersion                        := scala3V,
+    IntegrationTest / parallelExecution := false, // Sequential suites, parallel suite-tests execution
     libraryDependencies ++= Seq(
       // Configuration
       "is.cir" %% "ciris" % cirisV withSources (),

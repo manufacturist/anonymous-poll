@@ -1,7 +1,9 @@
-import entity.{EmailAddress, PollName, Text}
-import entity.dto.{PollCreate, Question}
+package main
 
-object DataFixtures:
+import entity.dto.{PollCreate, Question}
+import entity.{EmailAddress, PollName, Text}
+
+object Fixtures:
 
   // Inspired from https://typelevel.org/blog/2022/04/01/call-for-steering-committee-members.html
   val choiceQuestion: Question.Choice = Question.Choice(
@@ -11,12 +13,14 @@ object DataFixtures:
       Text("Participate in governance discussions & reimagine the way it runs"),
       Text("Improve the current charter")
     ),
-    isMultiPick = true
+    isMultiPick = false
   )
+
+  val fooEmailAddress: EmailAddress = EmailAddress("foo@bar.com")
 
   val pollCreate: PollCreate = PollCreate(
     name = PollName("Typelevel Steering Committee Members"),
-    recipients = Set(EmailAddress("foo@bar.com"), EmailAddress("baz@qux.com")),
+    recipients = Set(fooEmailAddress, EmailAddress("baz@qux.com")),
     questions = List(
       choiceQuestion,
       Question.Number(

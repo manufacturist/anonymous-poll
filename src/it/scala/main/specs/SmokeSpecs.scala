@@ -1,3 +1,5 @@
+package main.specs
+
 import cats.effect.IO
 import cats.effect.implicits.*
 import config.localAppConfig
@@ -10,7 +12,7 @@ import sttp.tapir.client.http4s.Http4sClientInterpreter
 
 final class SmokeSpecs extends CatsEffectSuite:
 
-  private val serverFixture = ResourceSuiteLocalFixture("server-run", AnonymousPollServer.run(Nil))
+  private val serverFixture = ResourceSuiteLocalFixture("server-run", main.AnonymousPollServer.run(Nil))
   private val clientFixture = ResourceSuiteLocalFixture("api-client", EmberClientBuilder.default[IO].build)
 
   private val clientInterpreter = Http4sClientInterpreter[IO]()
