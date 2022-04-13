@@ -2,7 +2,7 @@ package db
 
 import cats.effect.*
 import cats.implicits.*
-import config.AppConfig
+import config.{AppConfig, DatabaseConfig}
 import doobie.*
 import doobie.implicits.*
 import doobie.hikari.*
@@ -21,14 +21,14 @@ trait DbTransactor:
 
 object DbTransactor:
 
-  def buildTransactor()(using config: AppConfig): Resource[IO, DbTransactor] =
+  def build(dbConfig: DatabaseConfig): Resource[IO, DbTransactor] =
     for
       fixedThreadPool <- ExecutionContexts.fixedThreadPool[IO](4)
       hikariTransactor <- HikariTransactor.newHikariTransactor[IO](
         driverClassName = "org.h2.Driver",
-        url = config.db.h2Url,
-        user = config.db.username,
-        pass = config.db.password,
+        url = dbConfig.h2Url,
+        user = dbConfig.username,
+        pass = dbConfig.password,
         connectEC = fixedThreadPool
       )
     yield new DbTransactor {

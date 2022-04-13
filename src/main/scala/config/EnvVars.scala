@@ -1,8 +1,9 @@
 package config
 
 object EnvVars:
-  val SERVER_HOST = "SERVER_HOST"
-  val SERVER_PORT = "SERVER_PORT"
+  val SERVER_HOST             = "SERVER_HOST"
+  val SERVER_PORT             = "SERVER_PORT"
+  val SERVER_SHUTDOWN_TIMEOUT = "SERVER_SHUTDOWN_TIMEOUT"
 
   val FRONTEND_BASE_URI = "BASE_FRONTEND_URI"
 

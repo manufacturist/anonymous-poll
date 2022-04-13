@@ -4,6 +4,8 @@ import ciris.ConfigDecoder
 import entity.*
 import org.http4s.Uri
 
+import scala.concurrent.duration.FiniteDuration
+
 final case class AppConfig(
   server: ServerConfig,
   frontendUris: FrontendUris,
@@ -13,7 +15,7 @@ final case class AppConfig(
 )
 end AppConfig
 
-case class ServerConfig(host: String, port: Int):
+case class ServerConfig(host: String, port: Int, shutdownTimeout: FiniteDuration):
   override def toString: String = s"$host:$port"
 
   def serverUri: Uri = Uri.unsafeFromString(s"http://${this.toString}")

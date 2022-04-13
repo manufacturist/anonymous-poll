@@ -1,3 +1,5 @@
+package main
+
 import algebra.PollAlgebra
 import algebra.impl.PollAlgebraImpl
 import cats.effect.*
@@ -29,8 +31,8 @@ object AnonymousPollServer extends ResourceApp.Forever:
       given Logger    = logger
       given AppConfig = config
 
-      given DbTransactor   <- DbTransactor.buildTransactor()
       given Supervisor[IO] <- Supervisor[IO]
+      given DbTransactor   <- DbTransactor.build(config.db)
       given EmailPort      <- EmailPortFactory(config.emailPort)
 
       _ <- Resource.eval {
@@ -50,10 +52,11 @@ object AnonymousPollServer extends ResourceApp.Forever:
 
       _ <- Resource.eval(logger.info(s"Redoc link at http://127.0.0.1:1337/api/public/redoc"))
 
-      _ <- EmberServerBuilder
+      server <- EmberServerBuilder
         .default[IO]
         .withHostOption(Host.fromString(config.server.host))
         .withPort(Port.fromInt(config.server.port).getOrElse(port"1337"))
         .withHttpApp(httpApp)
+        .withShutdownTimeout(config.server.shutdownTimeout) // Default is 30[s] & this is bad for ITs
         .build
     yield ()

@@ -37,5 +37,5 @@ private[query] object QuestionQueries extends Composites:
   def selectAnswerWherePollId(eqPollId: PollId): Query0[(QuestionView, Answer)] =
     sql"""SELECT q.number, q.type, q.text, a.poll_id, a.question_number, a.email_address, a.answers, a.number 
          |FROM answer AS a
-         |JOIN question AS q ON q.poll_id = a.poll_id
+         |JOIN question AS q ON q.poll_id = a.poll_id AND q.number = a.question_number
          |WHERE a.poll_id = $eqPollId""".stripMargin.query[(QuestionView, Answer)]

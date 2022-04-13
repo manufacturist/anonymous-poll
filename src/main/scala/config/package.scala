@@ -4,6 +4,8 @@ import entity.*
 import monix.newtypes.HasBuilder
 import org.http4s.Uri
 
+import concurrent.duration.{DurationInt, FiniteDuration}
+
 package object config:
 
   given [Base, New](using
@@ -17,10 +19,11 @@ package object config:
   val localAppConfig: AppConfig = AppConfig(
     server = ServerConfig(
       host = "127.0.0.1",
-      port = 1337
+      port = 1337,
+      shutdownTimeout = 1.second
     ),
     frontendUris = FrontendUris(
-      Uri.unsafeFromString("http://127.0.0.1:1337")
+      Uri.unsafeFromString("http://127.0.0.1:1338")
     ),
     db = DatabaseConfig(
       name = "anonymous_poll",
@@ -54,6 +57,10 @@ package object config:
     for
       host <- env(EnvVars.SERVER_HOST).default(localAppConfig.server.host).resource[IO]
       port <- env(EnvVars.SERVER_PORT).as[Int].default(localAppConfig.server.port).resource[IO]
+      shutdownTimeout <- env(EnvVars.SERVER_SHUTDOWN_TIMEOUT)
+        .as[FiniteDuration]
+        .default(localAppConfig.server.shutdownTimeout)
+        .resource[IO]
 
       baseUri <- env(EnvVars.FRONTEND_BASE_URI)
         .as[String]
@@ -89,15 +96,11 @@ package object config:
     yield AppConfig(
       server = ServerConfig(
         host = host,
-        port = port
+        port = port,
+        shutdownTimeout = shutdownTimeout
       ),
       frontendUris = FrontendUris(baseUri),
-      db = DatabaseConfig(
-        name = "anonymous_poll",
-        username = "foo",
-        password = "bar",
-        locations = "sql" :: Nil
-      ),
+      db = localAppConfig.db,
       emailTemplates = EmailTemplatesConfig(
         inviteToPollSubject = inviteToPollSubject,
         inviteToPollContent = inviteToPollContent
