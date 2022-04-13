@@ -105,3 +105,23 @@ final class PollApiSpecs extends CatsEffectSuite:
       assert(results.contains(expectedOpenEndResult))
     }
   }
+
+  test("answering the same poll twice yields error") {
+    for
+      given Client[IO]         <- IO(clientFixture())
+      transactor: DbTransactor <- IO(transactorFixture())
+
+      pollId <- pollApi.createPoll(Fixtures.pollCreate.copy(questions = Fixtures.pollCreate.questions.head :: Nil))
+      code   <- transactor.interpret(HelperSql.selectCodeFromVoterWhereEmailAddress(eq = Fixtures.fooEmailAddress))
+
+      pollAnswer = PollAnswer(
+        code = code,
+        answers = Answer.Choice(QuestionNumber(1), Fixtures.choiceQuestion.text :: Nil) :: Nil
+      )
+
+      _      <- pollApi.answerPoll(pollAnswer)
+      result <- pollApi.answerPoll(pollAnswer).attempt
+
+    // TODO: If error types are implemented, do yourself a favour and assert against an exact error type
+    yield assert(result.isLeft)
+  }
