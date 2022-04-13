@@ -5,7 +5,7 @@ import doobie.*
 import doobie.implicits.*
 import entity.*
 import entity.dao.*
-import entity.dto.{PollView, QuestionView}
+import entity.dto.*
 
 object PollSql extends PollSql
 

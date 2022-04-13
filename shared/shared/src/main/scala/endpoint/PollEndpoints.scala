@@ -1,8 +1,8 @@
 package endpoint
 
+import core.json.{*, given}
 import entity.*
 import entity.dto.*
-import core.json.{*, given}
 
 object PollEndpoints:
   private val version      = 1

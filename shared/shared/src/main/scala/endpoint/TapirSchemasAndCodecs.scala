@@ -2,8 +2,8 @@ package endpoint
 
 import monix.newtypes.{HasBuilder, HasExtractor, TypeInfo}
 import sttp.tapir.Codec.PlainCodec
-import sttp.tapir.{DecodeResult, Schema}
 import sttp.tapir.generic.SchemaDerivation
+import sttp.tapir.{DecodeResult, Schema}
 
 trait TapirSchemasAndCodecs extends SchemaDerivation:
   given [Base, New](using

@@ -105,7 +105,13 @@ class PollAlgebraImpl(
     yield PollView(
       id = newPoll.id,
       name = newPoll.name,
-      questions = newQuestions.map(QuestionView.apply)
+      questions = newQuestions.map(questionDao =>
+        QuestionView(
+          number = questionDao.number,
+          `type` = questionDao.`type`,
+          text = questionDao.text
+        )
+      )
     )
 
   override def findPollByCode(code: SingleUseVoteCode): IO[Option[PollView]] =

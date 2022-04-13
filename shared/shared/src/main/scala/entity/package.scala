@@ -1,6 +1,6 @@
 import monix.newtypes.NewsubtypeWrapped
+
 import java.util.UUID
-import scala.quoted.Varargs
 
 package object entity:
 

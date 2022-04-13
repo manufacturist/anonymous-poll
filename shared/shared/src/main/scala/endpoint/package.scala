@@ -7,14 +7,12 @@ package object endpoint extends Tapir with TapirJsonCirce with TapirSchemasAndCo
   val version: Int                                        = 1
   val baseEndpoint: Endpoint[Unit, Unit, Unit, Unit, Any] = endpoint.prependIn("api" / s"v$version")
 
-  val Uri: org.http4s.Uri.type                     = org.http4s.Uri
-  val Request: org.http4s.Request.type             = org.http4s.Request
-  val Response: org.http4s.Response.type           = org.http4s.Response
-  val HttpRoutes: org.http4s.HttpRoutes.type       = org.http4s.HttpRoutes
-  val Header: org.http4s.Header.type               = org.http4s.Header
-  val Method: org.http4s.Method.type               = org.http4s.Method
-  val Router: org.http4s.server.Router.type        = org.http4s.server.Router
-  val CORS: org.http4s.server.middleware.CORS.type = org.http4s.server.middleware.CORS
+  val Uri: org.http4s.Uri.type               = org.http4s.Uri
+  val Request: org.http4s.Request.type       = org.http4s.Request
+  val Response: org.http4s.Response.type     = org.http4s.Response
+  val HttpRoutes: org.http4s.HttpRoutes.type = org.http4s.HttpRoutes
+  val Header: org.http4s.Header.type         = org.http4s.Header
+  val Method: org.http4s.Method.type         = org.http4s.Method
 
   type Request[F[_]]    = org.http4s.Request[F]
   type Response[F[_]]   = org.http4s.Response[F]

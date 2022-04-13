@@ -1,4 +1,3 @@
-
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import cats.effect.IO
 

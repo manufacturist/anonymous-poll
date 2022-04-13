@@ -1,7 +1,7 @@
 package algebra
 
-import entity.*
 import cats.effect.IO
+import entity.*
 import entity.dto.*
 
 trait PollAlgebra:
