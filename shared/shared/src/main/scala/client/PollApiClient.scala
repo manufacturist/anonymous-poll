@@ -1,4 +1,4 @@
-package main
+package client
 
 import cats.effect.IO
 import endpoint.{PollEndpoints, Response}
@@ -10,7 +10,7 @@ import sttp.tapir.DecodeResult
 import sttp.tapir.DecodeResult.*
 import sttp.tapir.client.http4s.Http4sClientInterpreter
 
-final class PollApi(baseUri: Uri):
+final class PollApiClient(baseUri: Uri):
 
   extension [E, O](httpIO: (Request[IO], Response[IO] => IO[DecodeResult[Either[E, O]]]))
     def run()(using client: Client[IO]) =

@@ -2,6 +2,7 @@ package main.specs
 
 import cats.effect.IO
 import cats.effect.implicits.*
+import client.PollApiClient
 import config.localAppConfig
 import db.{DbTransactor, Migrator}
 import entity.*
@@ -22,7 +23,7 @@ final class PollApiSpecs extends CatsEffectSuite:
 
   override def munitFixtures: Seq[Fixture[?]] = serverFixture :: clientFixture :: transactorFixture :: Nil
 
-  val pollApi: PollApi = new PollApi(localAppConfig.server.serverUri)
+  val pollApi: PollApiClient = new PollApiClient(localAppConfig.server.serverUri)
 
   override def afterEach(context: AfterEach): Unit = {
     import doobie.implicits.*
