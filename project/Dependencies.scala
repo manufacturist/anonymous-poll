@@ -17,6 +17,7 @@ object Dependencies {
   val scalaCssV        = "1.0.0"
   val scalaJsDomV      = "2.1.0"
   val scalaTagsV       = "0.11.1"
+  val sttpClient3V     = "3.5.1"
   val tapirV           = "1.0.0-M6"
 
   def shared = libraryDependencies ++= Seq(
@@ -24,28 +25,32 @@ object Dependencies {
     "is.cir" %% "ciris" % cirisV withSources (),
 
     // Newtypes
-    "io.monix" %% "newtypes-core" % newtypesV withSources (),
+    "io.monix" %%% "newtypes-core" % newtypesV withSources (),
 
     // JSON
-    "io.circe" %% "circe-core"    % circeV withSources (),
-    "io.circe" %% "circe-generic" % circeV withSources (),
+    "io.circe" %%% "circe-core"    % circeV withSources (),
+    "io.circe" %%% "circe-generic" % circeV withSources (),
 
     // IO monad
-    "org.typelevel" %% "cats-effect" % catsV withSources (),
+    "org.typelevel" %%% "cats-effect" % catsV withSources (),
 
     // Http4s dependencies
-    "org.http4s" %% "http4s-circe"        % http4sV withSources (),
-    "org.http4s" %% "http4s-dsl"          % http4sV withSources (),
-    "org.http4s" %% "http4s-ember-client" % http4sV withSources (),
+    "org.http4s" %%% "http4s-circe"        % http4sV withSources (),
+    "org.http4s" %%% "http4s-dsl"          % http4sV withSources (),
+    "org.http4s" %%% "http4s-ember-client" % http4sV withSources (),
 
     // Tapir - Endpoint descriptions conversions to Server Http Endpoints, Http Clients & Documentation
-    "com.softwaremill.sttp.tapir" %% "tapir-core"          % tapirV withSources (),
-    "com.softwaremill.sttp.tapir" %% "tapir-json-circe"    % tapirV withSources (),
-    "com.softwaremill.sttp.tapir" %% "tapir-cats"          % tapirV withSources (),
-    "com.softwaremill.sttp.tapir" %% "tapir-http4s-client" % tapirV withSources (),
+    "com.softwaremill.sttp.tapir" %%% "tapir-core"        % tapirV withSources (),
+    "com.softwaremill.sttp.tapir" %%% "tapir-json-circe"  % tapirV withSources (),
+    "com.softwaremill.sttp.tapir" %%% "tapir-sttp-client" % tapirV withSources (),
+
+    // Sttp client backend
+    "com.softwaremill.sttp.client3" %%% "core"           % sttpClient3V withSources (),
+    "com.softwaremill.sttp.client3" %%% "cats"           % sttpClient3V withSources (), // frontend-side
+    "com.softwaremill.sttp.client3"  %% "http4s-backend" % sttpClient3V withSources (), // backend-side
 
     // Testing
-    "org.typelevel" %% "munit-cats-effect-3" % munitCatsEffectV % "test, it",
+    "org.typelevel" %%% "munit-cats-effect-3" % munitCatsEffectV % "test, it",
 
     // Logging
     "org.typelevel" %% "log4cats-slf4j"  % log4catsV withSources (),

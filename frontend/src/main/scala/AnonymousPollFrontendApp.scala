@@ -1,37 +1,30 @@
+import cats.effect.*
+import cats.effect.unsafe.IORuntime
+import client.PollApiClient
 import component.*
-import org.scalajs.dom
+import org.http4s.Uri
+import org.http4s.client.Client
+import org.http4s.ember.client.EmberClientBuilder
 import org.scalajs.dom.*
-import page.*
+import page.PageRenderer
 
-import scala.util.{Failure, Success, Try}
+object AnonymousPollFrontendApp extends ResourceApp.Simple {
 
-object AnonymousPollFrontendApp {
+  given IORuntime = cats.effect.unsafe.implicits.global
 
-  private val appId           = "anonymous-poll-app"
-  private lazy val appElement = document.getElementById(appId)
+  override def run: Resource[IO, Unit] =
+    for given Client[IO] <- EmberClientBuilder.default[IO].build
+    yield {
+      val appId      = "anonymous-poll-app"
+      val appElement = document.getElementById(appId)
 
-  def main(args: Array[String]): Unit = {
-    renderPageForHash(None)
+      val pollApiClient = new PollApiClient(Uri.unsafeFromString("http://127.0.0.1:1337"))
+      val pageRenderer  = new PageRenderer(appElement, pollApiClient)
 
-    window.onhashchange = event => {
-      val url          = event.newURL
-      val hashPosition = url.lastIndexOf("#") + 1
-      val hash         = url.substring(hashPosition)
+      // Initial rendering
+      pageRenderer.render(None)
 
-      renderPageForHash(Some(hash))
+      // SPA-like event handler
+      window.onhashchange = pageRenderer.render(_: HashChangeEvent)
     }
-  }
-
-  private def renderPageForHash(hash: Option[String]): Unit =
-    val value = hash match {
-      case Some(value) => value
-      case None        => window.location.hash.substring(1)
-    }
-
-    val pageName = Try(PageName.valueOf(value)) match {
-      case Failure(exception) => PageName.Home
-      case Success(value)     => value
-    }
-
-    appElement.innerHTML = PageRenderer(pageName).innerHTML
 }

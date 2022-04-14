@@ -28,7 +28,8 @@ lazy val frontend = project
     Settings.common,
     Dependencies.shared,
     Dependencies.js,
-    scalaJSUseMainModuleInitializer := true
+    scalaJSUseMainModuleInitializer := true,
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
   )
   .dependsOn(shared.js)
 
@@ -39,5 +40,6 @@ lazy val shared = crossProject(JSPlatform, JVMPlatform)
     name := "anonymous-poll-shared",
     Settings.common,
     Dependencies.shared,
-    Defaults.itSettings
+    Defaults.itSettings,
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
   )
