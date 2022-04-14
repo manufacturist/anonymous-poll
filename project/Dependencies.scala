@@ -14,6 +14,9 @@ object Dependencies {
   val logbackV         = "1.2.11"
   val munitCatsEffectV = "1.0.7"
   val newtypesV        = "0.2.1"
+  val scalaCssV        = "1.0.0"
+  val scalaJsDomV      = "2.1.0"
+  val scalaTagsV       = "0.11.1"
   val tapirV           = "1.0.0-M6"
 
   def shared = libraryDependencies ++= Seq(
@@ -76,7 +79,9 @@ object Dependencies {
   )
 
   def js = libraryDependencies ++= Seq(
-    // Scala.js dependencies
-    "com.github.japgolly.scalacss" %%% "core" % "0.8.0-RC1" withSources ()
+    // Frontend dependencies
+    "org.scala-js"                 %%% "scalajs-dom" % scalaJsDomV withSources (),
+    "com.lihaoyi"                  %%% "scalatags"   % scalaTagsV withSources (),
+    "com.github.japgolly.scalacss" %%% "core"        % scalaCssV withSources ()
   )
 }

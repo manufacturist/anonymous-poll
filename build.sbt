@@ -27,7 +27,8 @@ lazy val frontend = project
     name := "anonymous-poll-frontend",
     Settings.common,
     Dependencies.shared,
-    Dependencies.js
+    Dependencies.js,
+    scalaJSUseMainModuleInitializer := true
   )
   .dependsOn(shared.js)
 
