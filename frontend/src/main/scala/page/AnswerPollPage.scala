@@ -41,7 +41,7 @@ class AnswerPollPage(pollApiClient: PollApiClient)(using Http4sClient[IO], IORun
             pollView.questions.map(q => p(q.toString)),
             p(
               "Results can be viewed ",
-              a(href := s"#Results?pollId=${pollView.id}")("here")
+              a(href := s"./?pollId=${pollView.id}#Results")("here")
             )
           ).render
         case None =>
