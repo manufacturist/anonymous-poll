@@ -1,8 +1,15 @@
 package page
 
+import component.*
 import org.scalajs.dom.Element
 import scalatags.JsDom.all.*
 
 class LandingPage() extends Page:
   override def render: Element =
-    p("Hello Scala.js!").render
+    container(
+      p("This is an anonymous poll app, which implies the following:"),
+      ul(`class` := "list-disc px-6")(
+        li("You can only vote once using email received link"),
+        li("The poll is deleted 6h after its creation")
+      )
+    ).render

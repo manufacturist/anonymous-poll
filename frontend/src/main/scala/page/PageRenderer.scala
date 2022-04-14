@@ -1,6 +1,6 @@
 package page
 
-import component.Navbar
+import component.{Footer, Navbar}
 import org.scalajs.dom.Element
 import page.PageName
 import page.PageName.{Answer, Home, Results}
@@ -18,6 +18,7 @@ object PageRenderer {
 
     div(
       navbar.render,
-      pageContent.render
+      pageContent.render,
+      Footer.render
     ).render
 }
