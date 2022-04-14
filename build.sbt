@@ -1,3 +1,5 @@
+import sbt.Compile
+
 lazy val root = project
   .in(file("."))
   .aggregate(shared.jvm, shared.js, backend, frontend)
@@ -20,7 +22,7 @@ lazy val backend = project
   .dependsOn(shared.jvm)
 
 lazy val frontend = project
-  .enablePlugins(ScalaJSPlugin, JSDependenciesPlugin)
+  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, WebScalaJSBundlerPlugin, JSDependenciesPlugin)
   .in(file("./frontend"))
   .configs(IntegrationTest)
   .settings(
@@ -28,12 +30,20 @@ lazy val frontend = project
     Settings.common,
     Dependencies.shared,
     Dependencies.js,
+    webpackBundlingMode             := BundlingMode.LibraryAndApplication(),
     scalaJSUseMainModuleInitializer := true,
-    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
+    Compile / npmDependencies ++= List(
+      "buffer" -> "6.0.3",
+      "tls"    -> "0.0.1",
+      "net"    -> "1.0.2",
+      "os"     -> "0.1.2"
+    )
   )
   .dependsOn(shared.js)
 
 lazy val shared = crossProject(JSPlatform, JVMPlatform)
+  .jsConfigure(project => project.enablePlugins(ScalaJSBundlerPlugin))
   .in(file("./shared"))
   .configs(IntegrationTest)
   .settings(
@@ -41,5 +51,5 @@ lazy val shared = crossProject(JSPlatform, JVMPlatform)
     Settings.common,
     Dependencies.shared,
     Defaults.itSettings,
-    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )

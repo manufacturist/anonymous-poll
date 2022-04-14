@@ -13,7 +13,6 @@ import munit.CatsEffectSuite
 import org.http4s.Status
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
-import sttp.tapir.client.http4s.Http4sClientInterpreter
 
 final class PollApiSpecs extends CatsEffectSuite:
 

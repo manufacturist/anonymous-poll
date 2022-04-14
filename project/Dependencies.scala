@@ -40,9 +40,10 @@ object Dependencies {
     "org.http4s" %%% "http4s-ember-client" % http4sV withSources (),
 
     // Tapir - Endpoint descriptions conversions to Server Http Endpoints, Http Clients & Documentation
-    "com.softwaremill.sttp.tapir" %%% "tapir-core"        % tapirV withSources (),
-    "com.softwaremill.sttp.tapir" %%% "tapir-json-circe"  % tapirV withSources (),
-    "com.softwaremill.sttp.tapir" %%% "tapir-sttp-client" % tapirV withSources (),
+    "com.softwaremill.sttp.tapir" %%% "tapir-core"          % tapirV withSources (),
+    "com.softwaremill.sttp.tapir" %%% "tapir-json-circe"    % tapirV withSources (),
+    "com.softwaremill.sttp.tapir" %%% "tapir-sttp-client"   % tapirV withSources (),
+    "com.softwaremill.sttp.tapir"  %% "tapir-http4s-client" % tapirV withSources (),
 
     // Sttp client backend
     "com.softwaremill.sttp.client3" %%% "core"           % sttpClient3V withSources (),
