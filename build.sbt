@@ -1,9 +1,10 @@
 import sbt.Compile
+import scalajsbundler.sbtplugin.ScalaJSBundlerPlugin.autoImport.webpackEmitSourceMaps
 import webscalajs.WebScalaJS.autoImport.scalaJSProjects
 
 lazy val root = project
   .in(file("."))
-  .aggregate(shared.jvm, shared.js, backend, frontend, frontendOutput)
+  .aggregate(shared.jvm, shared.js, backend, frontend, frontendCompile)
   .settings(
     name    := "anonymous-poll",
     version := "0.0.1"
@@ -22,7 +23,7 @@ lazy val backend = project
   )
   .dependsOn(shared.jvm)
 
-lazy val frontendOutput = project
+lazy val frontendCompile = project
   .enablePlugins(WebScalaJSBundlerPlugin)
   .in(file("./frontend-output"))
   .settings(
@@ -41,8 +42,9 @@ lazy val frontend = project
     Settings.common,
     Dependencies.shared,
     Dependencies.js,
-    scalaJSUseMainModuleInitializer := true
-//    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) },
+    scalaJSUseMainModuleInitializer := true,
+    webpackBundlingMode             := BundlingMode.LibraryAndApplication(),
+    webpackEmitSourceMaps           := false
   )
   .dependsOn(shared.js)
 
@@ -66,5 +68,4 @@ lazy val shared = crossProject(JSPlatform, JVMPlatform)
     Settings.common,
     Dependencies.shared,
     Defaults.itSettings
-//    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) },
   )
