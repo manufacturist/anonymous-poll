@@ -5,7 +5,7 @@ To run the backend, simply:
 sbt backend/run
 ```
 
-To view the static frontend, open:
+To view the static frontend, run:
 ```bash
-frontend/index.html
+cd frontend && python -m http.server
 ```
