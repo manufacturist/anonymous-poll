@@ -37,18 +37,12 @@ object Dependencies {
     // Http4s dependencies
     "org.http4s" %%% "http4s-circe"        % http4sV withSources (),
     "org.http4s" %%% "http4s-dsl"          % http4sV withSources (),
-    "org.http4s" %%% "http4s-ember-client" % http4sV withSources (),
+    "org.http4s"  %% "http4s-ember-client" % http4sV withSources (),
 
     // Tapir - Endpoint descriptions conversions to Server Http Endpoints, Http Clients & Documentation
-    "com.softwaremill.sttp.tapir" %%% "tapir-core"          % tapirV withSources (),
-    "com.softwaremill.sttp.tapir" %%% "tapir-json-circe"    % tapirV withSources (),
-    "com.softwaremill.sttp.tapir" %%% "tapir-sttp-client"   % tapirV withSources (),
-    "com.softwaremill.sttp.tapir"  %% "tapir-http4s-client" % tapirV withSources (),
-
-    // Sttp client backend
-    "com.softwaremill.sttp.client3" %%% "core"           % sttpClient3V withSources (),
-    "com.softwaremill.sttp.client3" %%% "cats"           % sttpClient3V withSources (), // frontend-side
-    "com.softwaremill.sttp.client3"  %% "http4s-backend" % sttpClient3V withSources (), // backend-side
+    "com.softwaremill.sttp.tapir" %%% "tapir-core"       % tapirV withSources (),
+    "com.softwaremill.sttp.tapir" %%% "tapir-json-circe" % tapirV withSources (),
+    "com.softwaremill.sttp.tapir" %%% "tapir-client"     % tapirV withSources (),
 
     // Testing
     "org.typelevel" %%% "munit-cats-effect-3" % munitCatsEffectV % "test, it",
@@ -85,6 +79,9 @@ object Dependencies {
   )
 
   def js = libraryDependencies ++= Seq(
+    // Http4s client browser integration (fetch based)
+    "org.http4s" %%% "http4s-dom" % "0.2.1" withSources (),
+
     // Frontend dependencies
     "org.scala-js"                 %%% "scalajs-dom" % scalaJsDomV withSources (),
     "com.lihaoyi"                  %%% "scalatags"   % scalaTagsV withSources (),

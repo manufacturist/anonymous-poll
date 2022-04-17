@@ -8,11 +8,7 @@ import munit.CatsEffectSuite
 import org.http4s.Status
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3.SttpBackend
-import sttp.client3.http4s.Http4sBackend
-import sttp.tapir.client.http4s.Http4sClientInterpreter
-import sttp.tapir.client.sttp.SttpClientInterpreter
+import tapir.Http4sClientInterpreter
 
 final class SmokeSpecs extends CatsEffectSuite:
 

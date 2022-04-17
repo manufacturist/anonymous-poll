@@ -16,38 +16,40 @@ import org.http4s.ember.client.EmberClientBuilder
 
 final class PollApiSpecs extends CatsEffectSuite:
 
-  private val serverFixture     = ResourceSuiteLocalFixture("server-run", main.AnonymousPollServer.run(Nil))
-  private val clientFixture     = ResourceSuiteLocalFixture("api-client", EmberClientBuilder.default[IO].build)
-  private val transactorFixture = ResourceSuiteLocalFixture("transactor", DbTransactor.build(localAppConfig.db))
+  private val pollApiClient =
+    for given Client[IO] <- EmberClientBuilder.default[IO].build
+    yield new PollApiClient(localAppConfig.server.serverUri)
 
-  override def munitFixtures: Seq[Fixture[?]] = serverFixture :: clientFixture :: transactorFixture :: Nil
+  private val serverFixture        = ResourceSuiteLocalFixture("server-run", main.AnonymousPollServer.run(Nil))
+  private val pollApiClientFixture = ResourceSuiteLocalFixture("api-client", pollApiClient)
+  private val transactorFixture    = ResourceSuiteLocalFixture("transactor", DbTransactor.build(localAppConfig.db))
 
-  val pollApi: PollApiClient = new PollApiClient(localAppConfig.server.serverUri)
+  override def munitFixtures: Seq[Fixture[?]] = serverFixture :: pollApiClientFixture :: transactorFixture :: Nil
 
   override def afterEach(context: AfterEach): Unit = {
     import doobie.implicits.*
-    super.afterEach(context)
+
     val afterEachCleanup =
       for
         transactor <- IO(transactorFixture())
         _          <- transactor.interpret(sql"DELETE FROM poll".update.run) // TODO: Investigate h2 TRUNCATE TABLE
         _          <- Migrator.migrate(localAppConfig.db)
-      yield ()
+      yield super.afterEach(context)
 
     afterEachCleanup.unsafeRunSync()
   }
 
   test("creating a poll and retrieving results will return an empty list") {
     for
-      given Client[IO] <- IO(clientFixture())
-      pollId           <- pollApi.createPoll(Fixtures.pollCreate)
-      results          <- pollApi.retrieveAnonymousResults(pollId)
+      pollApi <- IO(pollApiClientFixture())
+      pollId  <- pollApi.createPoll(Fixtures.pollCreate)
+      results <- pollApi.retrieveAnonymousResults(pollId)
     yield assert(results.isEmpty)
   }
 
   test("answering the poll will return some results") {
     for
-      given Client[IO]         <- IO(clientFixture())
+      pollApi                  <- IO(pollApiClientFixture())
       transactor: DbTransactor <- IO(transactorFixture())
 
       pollId <- pollApi.createPoll(Fixtures.pollCreate)
@@ -108,7 +110,7 @@ final class PollApiSpecs extends CatsEffectSuite:
 
   test("answering the same poll twice yields error") {
     for
-      given Client[IO]         <- IO(clientFixture())
+      pollApi                  <- IO(pollApiClientFixture())
       transactor: DbTransactor <- IO(transactorFixture())
 
       pollId <- pollApi.createPoll(Fixtures.pollCreate.copy(questions = Fixtures.pollCreate.questions.head :: Nil))

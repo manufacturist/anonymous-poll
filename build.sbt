@@ -58,7 +58,8 @@ lazy val shared = crossProject(JSPlatform, JVMPlatform)
           "tls"    -> "0.0.1",
           "net"    -> "1.0.2",
           "os"     -> "0.1.2"
-        )
+        ),
+        Dependencies.js
       )
   )
   .in(file("./shared"))
