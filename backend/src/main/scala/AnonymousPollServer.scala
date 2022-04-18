@@ -19,6 +19,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import query.{PollSql, QuestionSql, VoterSql}
 import routes.{DocRoutes, HealthRoutes, PollRoutes}
+import scaffold.Seeder
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 object AnonymousPollServer extends ResourceApp.Forever:
@@ -32,16 +33,16 @@ object AnonymousPollServer extends ResourceApp.Forever:
       given AppConfig = config
 
       given Supervisor[IO] <- Supervisor[IO]
-      given DbTransactor   <- DbTransactor.build(config.db)
       given EmailPort      <- EmailPortFactory(config.emailPort)
+      given DbTransactor   <- DbTransactor.build(config.db)
 
-      _ <- Resource.eval {
-        Migrator.migrate(config.db) *> logger.info("Migration successful...")
-      }
+      pollAlgebra: PollAlgebra <- Resource.eval(IO.pure(new PollAlgebraImpl(PollSql, VoterSql, QuestionSql)))
+
+      _ <- Migrator(config.db)
+      _ <- Seeder(config.env, pollAlgebra)
 
       httpApp = {
-        val pollAlgebra: PollAlgebra = new PollAlgebraImpl(PollSql, VoterSql, QuestionSql)
-        val pollRoutes: PollRoutes   = new PollRoutes(pollAlgebra)
+        val pollRoutes: PollRoutes = new PollRoutes(pollAlgebra)
 
         val apiEndpoints  = pollRoutes.serverEndpoints :+ HealthRoutes.healthEndpoint
         val docsEndpoints = DocRoutes.generateForRedoc(apiEndpoints)
@@ -50,7 +51,7 @@ object AnonymousPollServer extends ResourceApp.Forever:
         Router("/" -> httpRoutes).orNotFound
       }
 
-      _ <- Resource.eval(logger.info(s"Redoc link at http://127.0.0.1:1337/api/public/redoc"))
+      _ <- Resource.eval(logger.info(s"📄 Redoc link at http://127.0.0.1:1337/api/public/redoc"))
 
       server <- EmberServerBuilder
         .default[IO]

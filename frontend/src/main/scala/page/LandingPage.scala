@@ -10,6 +10,6 @@ class LandingPage() extends Page:
       p("This is an anonymous poll app, which implies the following:"),
       ul(`class` := "list-disc px-6")(
         li("You can only vote once using email received link"),
-        li("The poll is deleted 6h after its creation")
+        li("The poll is deleted one week after its creation OR on server restart")
       )
     ).render

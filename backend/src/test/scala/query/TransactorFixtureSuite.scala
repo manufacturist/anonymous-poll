@@ -2,10 +2,12 @@ package query
 
 import cats.effect.{IO, Resource}
 import config.DatabaseConfig
+import core.Logger
 import db.Migrator
 import doobie.util.transactor.Transactor
 import entity.PollId
 import munit.CatsEffectSuite
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import java.util.UUID
 
@@ -24,9 +26,11 @@ trait TransactorFixtureSuite extends CatsEffectSuite with doobie.munit.IOChecker
     pass = pass
   )
 
+  given Logger = Slf4jLogger.getLogger[IO]
+
   private val migrationFixture = ResourceSuiteLocalFixture(
     "migration-fixture",
-    Resource.eval(Migrator.migrate(DatabaseConfig(database, user, pass, "sql" :: Nil)))
+    Migrator(DatabaseConfig(database, user, pass, "sql" :: Nil))
   )
 
   override def munitFixtures = List(migrationFixture)

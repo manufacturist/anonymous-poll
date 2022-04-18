@@ -13,3 +13,6 @@ object EmailTemplates:
 
     override def content: EmailContent =
       EmailContent(config.emailTemplates.inviteToPollContent.render(to :: pollName :: voteLink :: Nil))
+
+    override def toString: String =
+      s"$to - $pollName - ${voteLink.renderString}"

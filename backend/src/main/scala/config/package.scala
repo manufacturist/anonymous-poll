@@ -17,13 +17,14 @@ package object config:
     }
 
   val localAppConfig: AppConfig = AppConfig(
+    env = Environment.LOCAL,
     server = ServerConfig(
       host = "127.0.0.1",
       port = 1337,
       shutdownTimeout = 1.second
     ),
     frontendUris = FrontendUris(
-      Uri.unsafeFromString("http://127.0.0.1:1338")
+      Uri.unsafeFromString("http://127.0.0.1:8000")
     ),
     db = DatabaseConfig(
       name = "anonymous_poll",
@@ -55,8 +56,14 @@ package object config:
 
   val appConfigResource: Resource[IO, AppConfig] =
     for
+      environment <- env(EnvVars.SERVER_ENVIRONMENT)
+        .map(Environment.valueOf)
+        .default(localAppConfig.env)
+        .resource[IO]
+
       host <- env(EnvVars.SERVER_HOST).default(localAppConfig.server.host).resource[IO]
       port <- env(EnvVars.SERVER_PORT).as[Int].default(localAppConfig.server.port).resource[IO]
+
       shutdownTimeout <- env(EnvVars.SERVER_SHUTDOWN_TIMEOUT)
         .as[FiniteDuration]
         .default(localAppConfig.server.shutdownTimeout)
@@ -94,6 +101,7 @@ package object config:
           Resource.eval(IO.pure(NoOpEmailConfig))
       }
     yield AppConfig(
+      env = environment,
       server = ServerConfig(
         host = host,
         port = port,

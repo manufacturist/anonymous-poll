@@ -4,6 +4,7 @@ import cats.effect.IO
 import cats.effect.implicits.*
 import client.PollApiClient
 import config.localAppConfig
+import core.Logger
 import db.{DbTransactor, Migrator}
 import entity.*
 import entity.dto.{QuestionView, *}
@@ -13,6 +14,7 @@ import munit.CatsEffectSuite
 import org.http4s.Status
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 final class PollApiSpecs extends CatsEffectSuite:
 
@@ -24,6 +26,8 @@ final class PollApiSpecs extends CatsEffectSuite:
   private val pollApiClientFixture = ResourceSuiteLocalFixture("api-client", pollApiClient)
   private val transactorFixture    = ResourceSuiteLocalFixture("transactor", DbTransactor.build(localAppConfig.db))
 
+  given Logger = Slf4jLogger.getLogger[IO]
+
   override def munitFixtures: Seq[Fixture[?]] = serverFixture :: pollApiClientFixture :: transactorFixture :: Nil
 
   override def afterEach(context: AfterEach): Unit = {
@@ -33,7 +37,7 @@ final class PollApiSpecs extends CatsEffectSuite:
       for
         transactor <- IO(transactorFixture())
         _          <- transactor.interpret(sql"DELETE FROM poll".update.run) // TODO: Investigate h2 TRUNCATE TABLE
-        _          <- Migrator.migrate(localAppConfig.db)
+        _          <- Migrator(localAppConfig.db).use_
       yield super.afterEach(context)
 
     afterEachCleanup.unsafeRunSync()

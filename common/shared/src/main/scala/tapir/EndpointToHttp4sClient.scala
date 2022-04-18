@@ -3,6 +3,7 @@ package tapir
 import cats.Applicative
 import cats.effect.Async
 import cats.implicits.*
+import fs2.Chunk
 import org.http4s.*
 import org.http4s.headers.`Content-Type`
 import org.typelevel.ci.CIString
@@ -10,7 +11,7 @@ import sttp.capabilities.Streams
 import sttp.model.ResponseMetadata
 import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.client.ClientOutputParams
-import sttp.tapir.internal.{Params, ParamsAsAny, SplitParams}
+import sttp.tapir.internal.{Params, ParamsAsAny, RichEndpointOutput, SplitParams}
 import sttp.tapir.{
   Codec,
   CodecFormat,
@@ -19,6 +20,7 @@ import sttp.tapir.{
   EndpointIO,
   EndpointInput,
   EndpointOutput,
+  FileRange,
   Mapping,
   RawBodyType,
   StreamBodyIO,
@@ -125,7 +127,8 @@ final class EndpointToHttp4sClient() {
       case RawBodyType.ByteArrayBody =>
         req.withEntity(encoded.asInstanceOf[Array[Byte]])
       case RawBodyType.ByteBufferBody =>
-        throw new IllegalArgumentException("ByteBufferBody not supported in inlined library")
+        val entityEncoder = EntityEncoder.chunkEncoder[F].contramap(Chunk.byteBuffer)
+        req.withEntity(encoded.asInstanceOf[ByteBuffer])(entityEncoder)
       case RawBodyType.InputStreamBody =>
         val entityEncoder = EntityEncoder.inputStreamEncoder[F, InputStream]
         req.withEntity(Applicative[F].pure(encoded.asInstanceOf[InputStream]))(entityEncoder)
@@ -194,7 +197,7 @@ final class EndpointToHttp4sClient() {
             case RawBodyType.ByteArrayBody =>
               response.body.compile.toVector.map(_.toArray).map(_.asInstanceOf[Any])
             case RawBodyType.ByteBufferBody =>
-              throw new IllegalArgumentException("ByteBufferBody not supported in inlined library")
+              response.body.compile.toVector.map(_.toArray).map(java.nio.ByteBuffer.wrap).map(_.asInstanceOf[Any])
             case RawBodyType.InputStreamBody =>
               response.body.compile.toVector.map(_.toArray).map(new ByteArrayInputStream(_)).map(_.asInstanceOf[Any])
             case RawBodyType.FileBody =>

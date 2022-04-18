@@ -7,6 +7,7 @@ import org.http4s.Uri
 import scala.concurrent.duration.FiniteDuration
 
 final case class AppConfig(
+  env: Environment,
   server: ServerConfig,
   frontendUris: FrontendUris,
   db: DatabaseConfig,
@@ -15,6 +16,9 @@ final case class AppConfig(
 )
 end AppConfig
 
+enum Environment:
+  case LOCAL, DEV, STG, PROD
+
 case class ServerConfig(host: String, port: Int, shutdownTimeout: FiniteDuration):
   override def toString: String = s"$host:$port"
 
@@ -22,7 +26,7 @@ case class ServerConfig(host: String, port: Int, shutdownTimeout: FiniteDuration
 end ServerConfig
 
 case class FrontendUris(baseUri: Uri):
-  def pollRetrievalUri(code: SingleUseVoteCode): Uri = baseUri / "poll" +? ("code", code.toString)
+  def pollRetrievalUri(code: SingleUseVoteCode): Uri = baseUri / "#Answer" +? ("code", code.toString)
 end FrontendUris
 
 case class EmailTemplatesConfig(inviteToPollSubject: SubjectTemplate, inviteToPollContent: ContentTemplate)
