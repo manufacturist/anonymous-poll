@@ -4,7 +4,7 @@ import webscalajs.WebScalaJS.autoImport.scalaJSProjects
 
 lazy val root = project
   .in(file("."))
-  .aggregate(shared.jvm, shared.js, backend, frontend, frontendCompile)
+  .aggregate(common.jvm, common.js, backend, frontend, frontendCompile)
   .settings(
     name    := "anonymous-poll",
     version := "0.0.1"
@@ -21,7 +21,7 @@ lazy val backend = project
     Defaults.itSettings,
     IntegrationTest / parallelExecution := false // Sequential suites, parallel tests execution
   )
-  .dependsOn(shared.jvm)
+  .dependsOn(common.jvm)
 
 lazy val frontendCompile = project
   .enablePlugins(WebScalaJSBundlerPlugin)
@@ -46,23 +46,22 @@ lazy val frontend = project
     webpackBundlingMode             := BundlingMode.LibraryAndApplication(),
     webpackEmitSourceMaps           := false
   )
-  .dependsOn(shared.js)
+  .dependsOn(common.js)
 
-lazy val shared = crossProject(JSPlatform, JVMPlatform)
+lazy val common = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .jsConfigure(
     _.enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
       .settings(
         Compile / npmDependencies ++= List(
-          "buffer" -> "6.0.3",
-          "tls"    -> "0.0.1",
-          "net"    -> "1.0.2",
-          "os"     -> "0.1.2"
+          "tls" -> "0.0.1",
+          "net" -> "1.0.2",
+          "os"  -> "0.1.2"
         ),
         Dependencies.js
       )
   )
-  .in(file("./shared"))
+  .in(file("./common"))
   .configs(IntegrationTest)
   .settings(
     name := "anonymous-poll-shared",
