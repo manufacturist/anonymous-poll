@@ -41,7 +41,7 @@ class PageRenderer(appElement: Element, pollApiClient: PollApiClient) {
     val pageContent = pageName match {
       case Home   => new LandingPage()
       case Answer => new AnswerPollPage(pollApiClient)
-      case _      => new NotFound()
+      case _      => new NotFoundPage()
     }
 
     val renderedPage = div(

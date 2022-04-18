@@ -1,3 +1,3 @@
 package object page:
   enum PageName:
-    case Home, Answer, Results
+    case Home, Create, Answer, Results

@@ -15,6 +15,7 @@ final class Navbar(currentPage: PageName) extends Component {
 
   private val linksByPageName = Map(
     PageName.Home    -> (a(href := "#Home", navDivAClass), "Home"),
+    PageName.Create  -> (a(href := "#Create", navDivAClass), "Create Poll"),
     PageName.Answer  -> (a(href := "#Answer", navDivAClass), "Answer Poll"),
     PageName.Results -> (a(href := "#Results", navDivAClass), "View Results")
   )

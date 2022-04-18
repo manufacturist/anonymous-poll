@@ -17,10 +17,8 @@ import scala.util.{Failure, Success, Try}
 
 class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
 
-  private val codeParam = "code"
-
-  private lazy val contentElement =
-    document.getElementById("content-element")
+  private val codeParam        = "code"
+  private val contentElementId = "content-element"
 
   private lazy val queryParams =
     new URLSearchParams(window.location.search)
@@ -35,7 +33,9 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
         (element, IO.raiseError(new RuntimeException("Couldn't read poll")))
       case Success(code) =>
         val element = container(
-          p("Loading poll...")
+          div(`id` := contentElementId)(
+            p("Loading poll...")
+          )
         ).render
 
         (element, IO.pure(code))
@@ -50,21 +50,29 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
       voteCode <- pollRetrievalOp
       pollView: Option[PollView] <- pollApiClient
         .findPollByCode(voteCode)
-        .redeemWith(e => IO.println(s"sorry $e") *> IO.raiseError(e), _ => IO.pure(None))
-    yield pollView match {
-      case Some(pollView) =>
-        container(
-          h3(s"Poll ${pollView.name}"),
-          pollView.questions.map(q => p(q.toString)),
-          p(
-            "Results can be viewed ",
-            a(href := s"./?pollId=${pollView.id}#Results")("here")
+        .redeemWith(e => IO.println(s"sorry $e") *> IO.raiseError(e), IO.pure)
+    yield {
+      val updatedElement = pollView match {
+        case Some(pollView) =>
+          val formWrapper = container().render
+          formWrapper.appendChild(
+            h2(`class` := "font-medium leading-tight text-4xl mt-0 mb-2")(s"\"${pollView.name}\" poll").render
           )
-        ).render
-      case None =>
-        container(
-          p("Poll not found :(")
-        ).render
+          formWrapper.appendChild(new PollForm(pollView.questions).render)
+          formWrapper.appendChild(
+            p(
+              "Results can be viewed ",
+              a(href := s"./?pollId=${pollView.id}#Results", `class` := "font-bold text-blue-400")("here")
+            ).render
+          )
+          formWrapper
+        case None =>
+          container(
+            p("Poll not found :(")
+          ).render
+      }
+
+      document.getElementById(contentElementId).innerHTML = updatedElement.innerHTML
     }).unsafeRunAndForget()
 
     element
