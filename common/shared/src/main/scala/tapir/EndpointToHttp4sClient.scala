@@ -3,7 +3,6 @@ package tapir
 import cats.Applicative
 import cats.effect.Async
 import cats.implicits.*
-import fs2.Chunk
 import org.http4s.*
 import org.http4s.headers.`Content-Type`
 import org.typelevel.ci.CIString
@@ -11,7 +10,7 @@ import sttp.capabilities.Streams
 import sttp.model.ResponseMetadata
 import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.client.ClientOutputParams
-import sttp.tapir.internal.{Params, ParamsAsAny, RichEndpointOutput, SplitParams}
+import sttp.tapir.internal.{Params, ParamsAsAny, SplitParams}
 import sttp.tapir.{
   Codec,
   CodecFormat,
@@ -20,7 +19,6 @@ import sttp.tapir.{
   EndpointIO,
   EndpointInput,
   EndpointOutput,
-  FileRange,
   Mapping,
   RawBodyType,
   StreamBodyIO,
@@ -46,22 +44,6 @@ final class EndpointToHttp4sClient() {
     }
 
     (request1, responseParser)
-  }
-
-  def toHttp4sRequestThrowDecodeFailures[A, I, E, O, R, F[_]: Async](
-    e: Endpoint[A, I, E, O, R],
-    maybeUri: Option[Uri]
-  ): A => I => (Request[F], Response[F] => F[Either[E, O]]) = { aParams => iParams =>
-    val (request, safeResponseParser) = toHttp4sRequest[A, I, E, O, R, F](e, maybeUri).apply(aParams).apply(iParams)
-
-    def unsafeResponseParser(response: Response[F]): F[Either[E, O]] =
-      safeResponseParser(response).map {
-        case DecodeResult.Value(v)    => v
-        case DecodeResult.Error(_, e) => throw e
-        case f                        => throw new IllegalArgumentException(s"Cannot decode: $f")
-      }
-
-    (request, unsafeResponseParser)
   }
 
   @scala.annotation.tailrec
@@ -143,8 +125,7 @@ final class EndpointToHttp4sClient() {
       case RawBodyType.ByteArrayBody =>
         req.withEntity(encoded.asInstanceOf[Array[Byte]])
       case RawBodyType.ByteBufferBody =>
-        val entityEncoder = EntityEncoder.chunkEncoder[F].contramap(Chunk.byteBuffer)
-        req.withEntity(encoded.asInstanceOf[ByteBuffer])(entityEncoder)
+        throw new IllegalArgumentException("ByteBufferBody not supported in inlined library")
       case RawBodyType.InputStreamBody =>
         val entityEncoder = EntityEncoder.inputStreamEncoder[F, InputStream]
         req.withEntity(Applicative[F].pure(encoded.asInstanceOf[InputStream]))(entityEncoder)
@@ -213,7 +194,7 @@ final class EndpointToHttp4sClient() {
             case RawBodyType.ByteArrayBody =>
               response.body.compile.toVector.map(_.toArray).map(_.asInstanceOf[Any])
             case RawBodyType.ByteBufferBody =>
-              response.body.compile.toVector.map(_.toArray).map(java.nio.ByteBuffer.wrap).map(_.asInstanceOf[Any])
+              throw new IllegalArgumentException("ByteBufferBody not supported in inlined library")
             case RawBodyType.InputStreamBody =>
               response.body.compile.toVector.map(_.toArray).map(new ByteArrayInputStream(_)).map(_.asInstanceOf[Any])
             case RawBodyType.FileBody =>
