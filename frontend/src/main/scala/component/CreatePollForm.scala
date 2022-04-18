@@ -6,7 +6,7 @@ import entity.dto.QuestionView
 import org.scalajs.dom.Element
 import scalatags.JsDom.all.*
 
-class PollForm(questions: List[QuestionView]) extends Component:
+class CreatePollForm(questions: List[QuestionView]) extends Component:
   override def render: Element =
     val questionComponents: List[QuestionComponent] = questions.map(QuestionComponent.apply)
     val formHTML                                    = questionComponents.map(_.render.outerHTML).mkString("")

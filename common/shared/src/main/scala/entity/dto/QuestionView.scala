@@ -10,7 +10,8 @@ case class QuestionView(
   picks: List[Text],
   min: Option[Int],
   max: Option[Int]
-)
+):
+  def display: Text = Text(s"$number. $text")
 
 object QuestionView:
   given Codec[QuestionView] = deriveCodec

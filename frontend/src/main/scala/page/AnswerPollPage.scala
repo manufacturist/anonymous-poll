@@ -6,9 +6,10 @@ import cats.effect.unsafe.implicits.*
 import cats.effect.unsafe.IORuntime
 import client.PollApiClient
 import component.*
-import entity.SingleUseVoteCode
-import entity.dto.PollView
-import org.scalajs.dom.*
+import component.question.{QUESTION_NUMBER_ATTRIBUTE, QUESTION_TYPE_ATTRIBUTE}
+import entity.*
+import entity.dto.{Answer, PollAnswer, PollView}
+import org.scalajs.dom.{Element, MouseEvent, NodeList, URLSearchParams, document, html, window}
 import scalatags.JsDom.all.*
 
 import java.util.UUID
@@ -20,19 +21,24 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
   private val codeParam        = "code"
   private val contentElementId = "content-element"
 
+  private def resultAnchor(pollId: PollId) = a(
+    `class` := "font-bold text-blue-800 hover:text-blue-200",
+    href    := s"./?pollId=$pollId#Results"
+  )
+
   private lazy val queryParams =
     new URLSearchParams(window.location.search)
 
-  private lazy val pollRetrieval: (Element, IO[SingleUseVoteCode]) =
+  private lazy val voteCodeParse: (Element, IO[SingleUseVoteCode]) =
     Try(SingleUseVoteCode(UUID.fromString(queryParams.get(codeParam)))) match {
       case Failure(exception) =>
-        val element = container(
+        val element = containerDiv(
           p("⚠️ You are missing the vote code. Unable to perform poll retrieval")
         ).render
 
         (element, IO.raiseError(new RuntimeException("Couldn't read poll")))
       case Success(code) =>
-        val element = container(
+        val element = containerDiv(
           div(`id` := contentElementId)(
             p("Loading poll...")
           )
@@ -42,37 +48,91 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
     }
 
   override def render: Element =
-    import concurrent.duration.DurationInt
-
-    val (element, pollRetrievalOp) = pollRetrieval
+    val (element, voteCodeRead) = voteCodeParse
 
     (for
-      voteCode <- pollRetrievalOp
-      pollView: Option[PollView] <- pollApiClient
-        .findPollByCode(voteCode)
-        .redeemWith(e => IO.println(s"sorry $e") *> IO.raiseError(e), IO.pure)
-    yield {
-      val updatedElement = pollView match {
-        case Some(pollView) =>
-          val formWrapper = container().render
-          formWrapper.appendChild(
-            h2(`class` := "font-medium leading-tight text-4xl mt-0 mb-2")(s"\"${pollView.name}\" poll").render
-          )
-          formWrapper.appendChild(new PollForm(pollView.questions).render)
-          formWrapper.appendChild(
-            p(
-              "Results can be viewed ",
-              a(href := s"./?pollId=${pollView.id}#Results", `class` := "font-bold text-blue-400")("here")
-            ).render
-          )
-          formWrapper
-        case None =>
-          container(
-            p("Poll not found :(")
-          ).render
-      }
+      voteCode                   <- voteCodeRead
+      pollView: Option[PollView] <- pollApiClient.findPollByCode(voteCode).redeemWith(IO.raiseError, IO.pure)
 
-      document.getElementById(contentElementId).innerHTML = updatedElement.innerHTML
-    }).unsafeRunAndForget()
+      _ = {
+        val (updatedElement, maybePollView) = pollView match {
+          case Some(pollView) =>
+            val formWrapper = containerDiv().render
+            formWrapper.appendChild(
+              h2(`class` := "font-medium leading-tight text-4xl mt-0 mb-2")(s"\"${pollView.name}\" poll").render
+            )
+            formWrapper.appendChild(new AnswerPollForm(pollView.questions).render)
+            formWrapper.appendChild(br().render)
+            formWrapper.appendChild(
+              p(
+                "Results can be viewed ",
+                resultAnchor(pollView.id)("here")
+              ).render
+            )
+
+            (formWrapper, Some(pollView))
+          case None =>
+            val notFound = containerDiv(
+              p("Poll not found :(")
+            ).render
+
+            (notFound, None)
+        }
+
+        document.getElementById(contentElementId).innerHTML = updatedElement.innerHTML
+
+        maybePollView.foreach { pollView =>
+          document.getElementById(ANSWER_POLL_BUTTON_ID).asInstanceOf[html.Button].onclick =
+            handleAnswerPollButtonClick(voteCode, pollView.id)(_)
+        }
+      }
+    yield ()).unsafeRunAndForget()
 
     element
+
+  private def handleAnswerPollButtonClick(voteCode: SingleUseVoteCode, pollId: PollId)(mouseEvent: MouseEvent): Unit =
+    val answerFields: List[html.Input | html.Select] = {
+      val inputs = document
+        .querySelectorAll("""input[question-number]:not([value=""])""")
+        .toList
+        .map(_.asInstanceOf[html.Input])
+
+      val selects: List[html.Select] = document
+        .querySelectorAll("""select[question-number]:not([value=""])""")
+        .toList
+        .map(_.asInstanceOf[html.Select])
+
+      inputs.concat(selects)
+    }
+
+    val answers: List[Answer] = answerFields.map { input =>
+      val questionType   = QuestionType.valueOf(input.getAttribute(QUESTION_TYPE_ATTRIBUTE))
+      val questionNumber = QuestionNumber(input.getAttribute(QUESTION_NUMBER_ATTRIBUTE).toInt)
+
+      (input: @unchecked) match {
+        case input: html.Input if questionType == QuestionType.Number =>
+          Answer.Number(questionNumber, input.value.toInt)
+
+        case input: html.Input if questionType == QuestionType.OpenEnd =>
+          Answer.OpenEnd(questionNumber, Text(input.value))
+
+        case select: html.Select if questionType == QuestionType.Choice =>
+          Answer.Choice(questionNumber, Text(select.value) :: Nil)
+      }
+    }
+
+    val pollAnswer = PollAnswer(
+      code = voteCode,
+      answers = answers
+    )
+
+    pollApiClient
+      .answerPoll(pollAnswer)
+      .map(_ =>
+        document.getElementById(contentElementId).innerHTML = p(
+          "Thank you for your answers!",
+          "Results can be viewed ",
+          resultAnchor(pollId)("here")
+        ).render.innerHTML
+      )
+      .unsafeRunAndForget()

@@ -6,7 +6,7 @@ import scalatags.JsDom.all.*
 
 class LandingPage() extends Page:
   override def render: Element =
-    container(
+    containerDiv(
       p("This is an anonymous poll app, which implies the following:"),
       ul(`class` := "list-disc px-6")(
         li("You can only vote once using email received link"),

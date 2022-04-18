@@ -10,6 +10,7 @@ import entity.*
 import entity.dto.{QuestionView, *}
 import entity.dto.AnsweredQuestionView.AnsweredChoiceView
 import main.*
+import main.Fixtures.*
 import munit.CatsEffectSuite
 import org.http4s.Status
 import org.http4s.client.Client
@@ -43,10 +44,10 @@ final class PollApiSpecs extends CatsEffectSuite:
     afterEachCleanup.unsafeRunSync()
   }
 
-  test("creating a poll and retrieving results will return an empty list".ignore) {
+  test("creating a poll and retrieving results will return an empty list") {
     for
       pollApi <- IO(pollApiClientFixture())
-      pollId  <- pollApi.createPoll(Fixtures.pollCreate)
+      pollId  <- pollApi.createPoll(pollCreate)
       results <- pollApi.retrieveAnonymousResults(pollId)
     yield assert(results.isEmpty)
   }
@@ -56,8 +57,8 @@ final class PollApiSpecs extends CatsEffectSuite:
       pollApi                  <- IO(pollApiClientFixture())
       transactor: DbTransactor <- IO(transactorFixture())
 
-      pollId <- pollApi.createPoll(Fixtures.pollCreate)
-      code   <- transactor.interpret(HelperSql.selectCodeFromVoterWhereEmailAddress(eq = Fixtures.fooEmailAddress))
+      pollId <- pollApi.createPoll(pollCreate)
+      code   <- transactor.interpret(HelperSql.selectCodeFromVoterWhereEmailAddress(eq = fooEmailAddress))
 
       q1 = QuestionNumber(1)
       q2 = QuestionNumber(2)
@@ -67,7 +68,6 @@ final class PollApiSpecs extends CatsEffectSuite:
         case Some(pollView) =>
           IO {
             import QuestionType.*
-            import Fixtures.*
 
             assert(pollView.name == pollCreate.name)
             assert(pollView.questions.size == 3)
@@ -91,7 +91,7 @@ final class PollApiSpecs extends CatsEffectSuite:
       pollAnswer = PollAnswer(
         code = code,
         answers = List(
-          Answer.Choice(q1, Fixtures.choiceQuestion.text :: Nil),
+          Answer.Choice(q1, choiceQuestion.text :: Nil),
           Answer.Number(q2, 1),
           Answer.OpenEnd(q3, q3Answer)
         )
@@ -105,9 +105,14 @@ final class PollApiSpecs extends CatsEffectSuite:
 
       import AnsweredQuestionView.*
 
-      val expectedChoiceResult  = AnsweredChoiceView(q1, Map(Fixtures.choiceQuestion.text -> 1))
-      val expectedNumberResult  = AnsweredNumberView(q2, 1)
-      val expectedOpenEndResult = AnsweredOpenEndView(q3, q3Answer :: Nil)
+      val expectedChoiceResult = AnsweredChoiceView(
+        q1,
+        pollCreate.questions.head.text,
+        Map(choiceQuestion.text -> 1)
+      )
+
+      val expectedNumberResult  = AnsweredNumberView(q2, pollCreate.questions(1).text, 1)
+      val expectedOpenEndResult = AnsweredOpenEndView(q3, pollCreate.questions(2).text, q3Answer :: Nil)
 
       assert(results.contains(expectedChoiceResult))
       assert(results.contains(expectedNumberResult))
@@ -120,12 +125,12 @@ final class PollApiSpecs extends CatsEffectSuite:
       pollApi                  <- IO(pollApiClientFixture())
       transactor: DbTransactor <- IO(transactorFixture())
 
-      pollId <- pollApi.createPoll(Fixtures.pollCreate.copy(questions = Fixtures.pollCreate.questions.head :: Nil))
-      code   <- transactor.interpret(HelperSql.selectCodeFromVoterWhereEmailAddress(eq = Fixtures.fooEmailAddress))
+      pollId <- pollApi.createPoll(pollCreate.copy(questions = pollCreate.questions.head :: Nil))
+      code   <- transactor.interpret(HelperSql.selectCodeFromVoterWhereEmailAddress(eq = fooEmailAddress))
 
       pollAnswer = PollAnswer(
         code = code,
-        answers = Answer.Choice(QuestionNumber(1), Fixtures.choiceQuestion.text :: Nil) :: Nil
+        answers = Answer.Choice(QuestionNumber(1), choiceQuestion.text :: Nil) :: Nil
       )
 
       _      <- pollApi.answerPoll(pollAnswer)

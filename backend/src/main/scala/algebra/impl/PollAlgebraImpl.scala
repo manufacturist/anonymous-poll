@@ -164,15 +164,15 @@ class PollAlgebraImpl(
               .groupBy(identity)
               .map { case (key, value) => key.value -> value.size }
 
-            AnsweredChoiceView(questionView.number, answerStats)
+            AnsweredChoiceView(questionView.number, questionView.text, answerStats)
 
           case QuestionType.Number =>
             val numberPicks = answers.flatMap(_.number)
-            AnsweredNumberView(questionView.number, numberPicks.sum / numberPicks.size)
+            AnsweredNumberView(questionView.number, questionView.text, numberPicks.sum / numberPicks.size)
 
           case QuestionType.OpenEnd =>
             val opinions = answers.flatMap(_.answers.headOption)
-            AnsweredOpenEndView(questionView.number, opinions)
+            AnsweredOpenEndView(questionView.number, questionView.text, opinions)
         }
       }
     }
