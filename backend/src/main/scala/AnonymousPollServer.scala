@@ -15,6 +15,7 @@ import db.*
 import monix.newtypes.HasBuilder
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Router
+import org.http4s.server.middleware.{CORS, CORSPolicy}
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import query.{PollSql, QuestionSql, VoterSql}
@@ -48,7 +49,9 @@ object AnonymousPollServer extends ResourceApp.Forever:
         val docsEndpoints = DocRoutes.generateForRedoc(apiEndpoints)
         val httpRoutes    = Http4sServerInterpreter[IO]().toRoutes(apiEndpoints ++ docsEndpoints)
 
-        Router("/" -> httpRoutes).orNotFound
+        CORS.policy.withAllowOriginAll.withAllowMethodsAll.withAllowHeadersAll(
+          Router("/" -> httpRoutes).orNotFound
+        )
       }
 
       _ <- Resource.eval(logger.info(s"📄 Redoc link at http://127.0.0.1:1337/api/public/redoc"))
