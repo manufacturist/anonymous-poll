@@ -29,7 +29,7 @@ final class Seeder(pollAlgebra: PollAlgebra)(using Logger) {
           Question.Choice(
             text = Text("Which is the most important responsibility?"),
             answers = List(
-              Text("Bring something new that's currently missing from the table"),
+              Text("Bring something new to the table (currently missing)"),
               Text("Participate in governance discussions & reimagine the way it runs"),
               Text("Improve the current charter")
             ),

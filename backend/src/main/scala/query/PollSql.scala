@@ -38,7 +38,7 @@ private[query] object PollQueries extends Composites:
     sql"INSERT INTO poll (id, name, created_at) VALUES ($id, $name, $createdAt)".update
 
   def selectPollWhereVoterCode(eqCode: SingleUseVoteCode): Query0[(PollId, PollName, QuestionView)] =
-    sql"""SELECT p.id, p.name, q.number, q.type, q.text
+    sql"""SELECT p.id, p.name, q.number, q.type, q.text, q.picks, q.minimum, q.maximum, 
          |FROM poll AS p
          |JOIN voter AS v ON p.id = v.poll_id
          |JOIN question AS q ON p.id = q.poll_id  

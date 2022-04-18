@@ -109,7 +109,10 @@ class PollAlgebraImpl(
         QuestionView(
           number = questionDao.number,
           `type` = questionDao.`type`,
-          text = questionDao.text
+          text = questionDao.text,
+          picks = questionDao.picks,
+          min = questionDao.minimum,
+          max = questionDao.maximum
         )
       )
     )
