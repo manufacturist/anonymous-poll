@@ -31,7 +31,7 @@ class CreatePollPage() extends Page:
     ).render
 
   override def afterRender: IO[Unit] =
-    IO {
+    IO.delay {
       val form = document.getElementById(formId)
 
       document.getElementById(addChoiceId).asInstanceOf[HTMLButtonElement].onclick =
