@@ -4,7 +4,7 @@ import entity.Text
 import org.scalajs.dom.Element
 import scalatags.JsDom.all.*
 
-package object question:
+package object answer:
 
   val QUESTION_NUMBER_ATTRIBUTE = "question-number"
   val QUESTION_TYPE_ATTRIBUTE   = "question_type"

@@ -5,7 +5,7 @@ import org.scalajs.dom.Element
 import scalatags.JsDom.all.*
 
 class LandingPage() extends Page:
-  override def render: Element =
+  override def renderElement: Element =
     containerDiv(
       p("This is an anonymous poll app, which implies the following:"),
       ul(`class` := "list-disc px-6")(

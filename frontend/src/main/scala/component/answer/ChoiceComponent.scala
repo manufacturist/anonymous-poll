@@ -1,4 +1,4 @@
-package component.question
+package component.answer
 
 import component.*
 import entity.dto.QuestionView

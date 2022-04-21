@@ -5,7 +5,7 @@ import org.scalajs.dom.Element
 import scalatags.JsDom.all.*
 
 class NotFoundPage() extends Page:
-  override def render: Element =
+  override def renderElement: Element =
     containerDiv(
       p("404 - Not found / implemented :(")
     ).render.render

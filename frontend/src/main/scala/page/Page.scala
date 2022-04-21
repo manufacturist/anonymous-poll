@@ -4,4 +4,5 @@ import cats.effect.IO
 import org.scalajs.dom.Element
 
 trait Page:
-  def render: Element
+  def renderElement: Element
+  def afterRender: IO[Unit] = IO.unit

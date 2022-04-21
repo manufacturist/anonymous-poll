@@ -1,7 +1,7 @@
 package component
 
 import component.*
-import component.question.QuestionComponent
+import component.answer.QuestionComponent
 import entity.QuestionType
 import entity.dto.QuestionView
 import org.scalajs.dom.Element

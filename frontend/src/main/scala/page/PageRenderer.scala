@@ -40,16 +40,16 @@ class PageRenderer(appElement: Element, pollApiClient: PollApiClient) {
 
     val pageContent = pageName match {
       case Home    => new LandingPage()
+      case Create  => new CreatePollPage()
       case Answer  => new AnswerPollPage(pollApiClient)
       case Results => new ResultsPage(pollApiClient)
-      case _       => new NotFoundPage()
     }
 
     val renderedPage = div(
       navbar.render,
-      pageContent.render,
+      pageContent.renderElement,
       Footer.render
     ).render
 
-    IO.delay(appElement.innerHTML = renderedPage.innerHTML)
+    IO.delay(appElement.innerHTML = renderedPage.innerHTML) *> pageContent.afterRender
 }

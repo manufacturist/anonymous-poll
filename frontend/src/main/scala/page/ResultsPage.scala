@@ -6,10 +6,10 @@ import cats.effect.unsafe.IORuntime
 import cats.effect.unsafe.implicits.*
 import client.PollApiClient
 import component.*
-import component.question.{QUESTION_NUMBER_ATTRIBUTE, QUESTION_TYPE_ATTRIBUTE}
+import component.answer.{QUESTION_NUMBER_ATTRIBUTE, QUESTION_TYPE_ATTRIBUTE}
 import entity.*
 import entity.dto.{Answer, AnsweredQuestionView, PollAnswer, PollView}
-import org.scalajs.dom.{Text, *}
+import org.scalajs.dom.*
 import scalatags.JsDom.all.*
 
 import java.util.UUID
@@ -24,7 +24,7 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
   private lazy val queryParams =
     new URLSearchParams(window.location.search)
 
-  private lazy val pollIdParse: (Element, IO[PollId]) =
+  private lazy val (element, pollIdOp): (Element, IO[PollId]) =
     Try(PollId(UUID.fromString(queryParams.get(pollIdParam)))) match {
       case Failure(exception) =>
         val element = containerDiv(
@@ -42,60 +42,57 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
         (element, IO.pure(pollId))
     }
 
-  override def render: Element =
-    val (element, pollIdRead) = pollIdParse
-
-    (for
-      pollId                              <- pollIdRead
-      results: List[AnsweredQuestionView] <- pollApiClient.retrieveAnonymousResults(pollId)
-
-      _ = {
-        val resultsHTML = results
-          .sortBy(_.number.value)
-          .map {
-            case AnsweredQuestionView.AnsweredChoiceView(number, text, results) =>
-              div(
-                labelQuestion(s"$number. $text"),
-                table(
-                  tbody(
-                    tr(
-                      th("Response"),
-                      th("Votes")
-                    ),
-                    results.toList.map { case (key, value) =>
-                      tr(
-                        td(key),
-                        td(`class` := "float-right")(value.toString)
-                      )
-                    }
-                  )
-                ),
-                br()
-              )
-
-            case AnsweredQuestionView.AnsweredNumberView(number, text, average) =>
-              div(
-                labelQuestion(s"$number. $text"),
-                p(s"Average $average"),
-                br()
-              )
-
-            case AnsweredQuestionView.AnsweredOpenEndView(number, text, answers) =>
-              div(
-                labelQuestion(s"$number. $text"),
-                ol(
-                  answers.zipWithIndex.map { case (answer, index) =>
-                    li(s"$index. $answer")
-                  }
-                ),
-                br()
-              )
-          }
-          .map(_.render.innerHTML)
-          .mkString
-
-        document.getElementById(contentElementId).innerHTML = resultsHTML
-      }
-    yield ()).unsafeRunAndForget()
-
+  override def renderElement: Element =
     element
+
+  override def afterRender: IO[Unit] =
+    for
+      pollId                              <- pollIdOp
+      results: List[AnsweredQuestionView] <- pollApiClient.retrieveAnonymousResults(pollId)
+    yield {
+      val resultsHTML = results
+        .sortBy(_.number.value)
+        .map {
+          case AnsweredQuestionView.AnsweredChoiceView(number, text, results) =>
+            div(
+              labelQuestion(s"$number. $text"),
+              table(
+                tbody(
+                  tr(
+                    th("Response"),
+                    th("Votes")
+                  ),
+                  results.toList.map { case (key, value) =>
+                    tr(
+                      td(key),
+                      td(`class` := "float-right")(value.toString)
+                    )
+                  }
+                )
+              ),
+              br()
+            )
+
+          case AnsweredQuestionView.AnsweredNumberView(number, text, average) =>
+            div(
+              labelQuestion(s"$number. $text"),
+              p(s"Average $average"),
+              br()
+            )
+
+          case AnsweredQuestionView.AnsweredOpenEndView(number, text, answers) =>
+            div(
+              labelQuestion(s"$number. $text"),
+              ol(
+                answers.zipWithIndex.map { case (answer, index) =>
+                  li(s"$index. $answer")
+                }
+              ),
+              br()
+            )
+        }
+        .map(_.render.innerHTML)
+        .mkString
+
+      document.getElementById(contentElementId).innerHTML = resultsHTML
+    }
