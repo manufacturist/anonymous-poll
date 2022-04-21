@@ -26,18 +26,10 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
   private lazy val (element, voteCodeOp): (Element, IO[SingleUseVoteCode]) =
     Try(SingleUseVoteCode(UUID.fromString(queryParams.get(codeParam)))) match {
       case Failure(exception) =>
-        val element = containerDiv(
-          p("⚠️ You are missing the vote code. Unable to perform poll retrieval")
-        ).render
-
+        val element = containerDiv(p("⚠️ You are missing the vote code. Unable to perform poll retrieval")).render
         (element, IO.raiseError(new RuntimeException("Couldn't read poll")))
       case Success(code) =>
-        val element = containerDiv(
-          div(`id` := contentElementId)(
-            p("Loading poll...")
-          )
-        ).render
-
+        val element = containerDiv(div(`id` := contentElementId)(p("Loading poll..."))).render
         (element, IO.pure(code))
     }
 
@@ -77,11 +69,11 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
 
       maybePollView.foreach { pollView =>
         document.getElementById(ANSWER_POLL_BUTTON_ID).asInstanceOf[html.Button].onclick =
-          handleAnswerPollButtonClick(voteCode, pollView.id)(_)
+          _ => handleAnswerPollButtonClick(voteCode, pollView.id)
       }
     }
 
-  private def handleAnswerPollButtonClick(voteCode: SingleUseVoteCode, pollId: PollId)(mouseEvent: MouseEvent): Unit =
+  private def handleAnswerPollButtonClick(voteCode: SingleUseVoteCode, pollId: PollId): Unit =
     val answerFields: List[html.Input | html.Select] = {
       val inputs = document
         .querySelectorAll("""input[question-number]:not([value=""])""")
