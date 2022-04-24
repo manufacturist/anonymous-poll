@@ -22,7 +22,7 @@ final class Navbar(currentPage: PageName) extends Component {
 
   override def render: Element =
     nav(navClass)(
-      div(`class` := "mb-2 sm:mb-0")(
+      div(`class` := "mb-2 text-2xl sm:mb-0")(
         a(href := "#Home")("Anonymous Poll \uD83C\uDFAD")
       ),
       div(highlightCurrentPage)

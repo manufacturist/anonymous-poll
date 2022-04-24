@@ -17,24 +17,24 @@ import scala.util.{Failure, Success, Try}
 
 class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
 
-  private val codeParam        = "code"
-  private val contentElementId = "content-element"
+  private val CODE_QUERY_PARAM   = "code"
+  private val CONTENT_ELEMENT_ID = "content-element"
 
   private lazy val queryParams =
     new URLSearchParams(window.location.search)
 
-  private lazy val (element, voteCodeOp): (Element, IO[SingleUseVoteCode]) =
-    Try(SingleUseVoteCode(UUID.fromString(queryParams.get(codeParam)))) match {
+  private lazy val (initialElement, voteCodeOp): (Element, IO[SingleUseVoteCode]) =
+    Try(SingleUseVoteCode(UUID.fromString(queryParams.get(CODE_QUERY_PARAM)))) match {
       case Failure(exception) =>
         val element = containerDiv(p("⚠️ You are missing the vote code. Unable to perform poll retrieval")).render
         (element, IO.raiseError(new RuntimeException("Couldn't read poll")))
       case Success(code) =>
-        val element = containerDiv(div(`id` := contentElementId)(p("Loading poll..."))).render
+        val element = containerDiv(div(`id` := CONTENT_ELEMENT_ID)(p("Loading poll..."))).render
         (element, IO.pure(code))
     }
 
   override def renderElement: Element =
-    element
+    initialElement
 
   override def afterRender: IO[Unit] =
     for
@@ -49,23 +49,15 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
           )
           formWrapper.appendChild(new AnswerPollForm(pollView.questions).render)
           formWrapper.appendChild(br().render)
-          formWrapper.appendChild(
-            p(
-              "Results can be viewed ",
-              resultAnchor(pollView.id)("here")
-            ).render
-          )
+          formWrapper.appendChild(p("Results can be viewed ", resultAnchor(pollView.id)("here")).render)
 
           (formWrapper, Some(pollView))
         case None =>
-          val notFound = containerDiv(
-            p("Poll not found :(")
-          ).render
-
+          val notFound = containerDiv(p("Poll not found :(")).render
           (notFound, None)
       }
 
-      document.getElementById(contentElementId).innerHTML = updatedElement.innerHTML
+      document.getElementById(CONTENT_ELEMENT_ID).innerHTML = updatedElement.innerHTML
 
       maybePollView.foreach { pollView =>
         document.getElementById(ANSWER_POLL_BUTTON_ID).asInstanceOf[html.Button].onclick =
@@ -112,7 +104,7 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
     pollApiClient
       .answerPoll(pollAnswer)
       .map(_ =>
-        document.getElementById(contentElementId).innerHTML = p(
+        document.getElementById(CONTENT_ELEMENT_ID).innerHTML = p(
           "Thank you for your answers!",
           "Results can be viewed ",
           resultAnchor(pollId)("here")

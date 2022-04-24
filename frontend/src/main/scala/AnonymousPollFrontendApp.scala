@@ -20,7 +20,7 @@ object AnonymousPollFrontendApp extends ResourceApp.Simple {
 
     // Initial rendering
     pageRenderer.render(None) *> IO.delay {
-      // SPA-like event handler
+      // Old school AngularJs SPA-like event handler
       window.onhashchange = pageRenderer.render(_: HashChangeEvent).syncStep.unsafeRunSync()
     }
   }

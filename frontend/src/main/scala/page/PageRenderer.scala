@@ -40,7 +40,7 @@ class PageRenderer(appElement: Element, pollApiClient: PollApiClient) {
 
     val pageContent = pageName match {
       case Home    => new LandingPage()
-      case Create  => new CreatePollPage()
+      case Create  => new CreatePollPage(pollApiClient)
       case Answer  => new AnswerPollPage(pollApiClient)
       case Results => new ResultsPage(pollApiClient)
     }

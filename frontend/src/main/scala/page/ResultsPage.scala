@@ -18,14 +18,14 @@ import scala.util.{Failure, Success, Try}
 
 class ResultsPage(pollApiClient: PollApiClient) extends Page:
 
-  private val pollIdParam      = "pollId"
-  private val contentElementId = "content-element"
+  private val POLL_ID_QUERY_PARAM = "pollId"
+  private val CONTENT_ELEMENT_ID  = "content-element"
 
   private lazy val queryParams =
     new URLSearchParams(window.location.search)
 
-  private lazy val (element, pollIdOp): (Element, IO[PollId]) =
-    Try(PollId(UUID.fromString(queryParams.get(pollIdParam)))) match {
+  private lazy val (initialElement, pollIdOp): (Element, IO[PollId]) =
+    Try(PollId(UUID.fromString(queryParams.get(POLL_ID_QUERY_PARAM)))) match {
       case Failure(exception) =>
         val element = containerDiv(
           p("⚠️ You are missing the poll id. Unable to view the results")
@@ -34,7 +34,7 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
         (element, IO.raiseError(new RuntimeException("Couldn't read the pollId")))
       case Success(pollId) =>
         val element = containerDiv(
-          div(`id` := contentElementId)(
+          div(`id` := CONTENT_ELEMENT_ID)(
             p("Loading poll results...")
           )
         ).render
@@ -43,7 +43,7 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
     }
 
   override def renderElement: Element =
-    element
+    initialElement
 
   override def afterRender: IO[Unit] =
     for
@@ -59,7 +59,7 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
               table(
                 tbody(
                   tr(
-                    th("Response"),
+                    th(`class` := "text-left")("Response"),
                     th("Votes")
                   ),
                   results.toList.map { case (key, value) =>
@@ -85,7 +85,7 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
               labelQuestion(s"$number. $text"),
               ol(
                 answers.zipWithIndex.map { case (answer, index) =>
-                  li(s"$index. $answer")
+                  li(s"${index + 1}. $answer")
                 }
               ),
               br()
@@ -94,5 +94,5 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
         .map(_.render.innerHTML)
         .mkString
 
-      document.getElementById(contentElementId).innerHTML = resultsHTML
+      document.getElementById(CONTENT_ELEMENT_ID).innerHTML = resultsHTML
     }
