@@ -30,7 +30,8 @@ import sttp.tapir.{
 import java.io.{ByteArrayInputStream, InputStream}
 import java.nio.ByteBuffer
 
-final class EndpointToHttp4sClient() {
+// See comment in package object
+object EndpointToHttp4sClient {
 
   def toHttp4sRequest[A, I, E, O, R, F[_]: Async](
     e: Endpoint[A, I, E, O, R],

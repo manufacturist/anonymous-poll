@@ -8,7 +8,6 @@ import scalatags.JsDom.all.*
 
 class ChoiceCreateComponent(questionNumber: QuestionNumber) extends Component {
 
-  val PICK_WRAPPER_ID = s"picks-wrapper-$questionNumber"
   val PICK_ADD_BTN_ID = s"pick-add-button-$questionNumber"
   val PICK_CLASS      = s"pick-for-$questionNumber"
 
@@ -22,18 +21,16 @@ class ChoiceCreateComponent(questionNumber: QuestionNumber) extends Component {
     // Text input + wrapper
     val wrapper = questionWrapperElement(QuestionType.Choice)
 
-    val picksWrapper = div(id := PICK_WRAPPER_ID)(
-      baseButton(PICK_ADD_BTN_ID)(
-        onclick := { () => document.getElementById(PICK_ADD_BTN_ID).before(pickElement) }
-      )("+")
-    ).render
-
     // Minimum 2 picks
-    picksWrapper.prepend(pickElement)
-    picksWrapper.prepend(pickElement)
+    wrapper.append(pickElement)
+    wrapper.append(pickElement)
 
     // Add picks wrapper
-    wrapper.append(picksWrapper)
+    wrapper.append(
+      baseButton(PICK_ADD_BTN_ID)(
+        onclick := { () => document.getElementById(PICK_ADD_BTN_ID).before(pickElement) }
+      )("+").render
+    )
 
     wrapper
 }

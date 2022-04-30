@@ -3,7 +3,7 @@ import sbt.Keys._
 object Settings {
 
   def common = Seq(
-    scalaVersion := "3.1.1",
+    scalaVersion := "3.1.2",
     scalacOptions ++= Seq(
       "-encoding",
       "utf8",

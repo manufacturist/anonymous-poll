@@ -32,6 +32,9 @@ package object config:
       password = "bar",
       locations = "sql" :: Nil
     ),
+    purge = PurgeConfig(
+      interval = 2.days
+    ),
     emailTemplates = EmailTemplatesConfig(
       inviteToPollSubject = SubjectTemplate(Template("Poll %s")),
       inviteToPollContent = ContentTemplate(
@@ -54,7 +57,7 @@ package object config:
     )
   )
 
-  val appConfigResource: Resource[IO, AppConfig] =
+  def loadAppConfig(): Resource[IO, AppConfig] =
     for
       environment <- env(EnvVars.SERVER_ENVIRONMENT)
         .map(Environment.valueOf)
@@ -67,6 +70,11 @@ package object config:
       shutdownTimeout <- env(EnvVars.SERVER_SHUTDOWN_TIMEOUT)
         .as[FiniteDuration]
         .default(localAppConfig.server.shutdownTimeout)
+        .resource[IO]
+
+      purgeInterval <- env(EnvVars.PURGE_INTERVAL)
+        .as[FiniteDuration]
+        .default(localAppConfig.purge.interval)
         .resource[IO]
 
       baseUri <- env(EnvVars.FRONTEND_BASE_URI)
@@ -107,8 +115,13 @@ package object config:
         port = port,
         shutdownTimeout = shutdownTimeout
       ),
-      frontendUris = FrontendUris(baseUri),
+      frontendUris = FrontendUris(
+        baseUri = baseUri
+      ),
       db = localAppConfig.db,
+      purge = PurgeConfig(
+        interval = purgeInterval
+      ),
       emailTemplates = EmailTemplatesConfig(
         inviteToPollSubject = inviteToPollSubject,
         inviteToPollContent = inviteToPollContent

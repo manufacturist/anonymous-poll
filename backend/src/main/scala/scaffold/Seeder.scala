@@ -43,7 +43,7 @@ final class Seeder(pollAlgebra: PollAlgebra)(using Logger) {
           Question.OpenEnd(
             text = Text(
               "If you were to recommend any functional Scala framework to a friend, " +
-                "how long would it take him to learn CE3?"
+                "how long would it take him / her / them to learn CE3?"
             )
           )
         )

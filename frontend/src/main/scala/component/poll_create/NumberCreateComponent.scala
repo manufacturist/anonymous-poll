@@ -17,12 +17,8 @@ class NumberCreateComponent(questionNumber: QuestionNumber) extends Component {
     wrapper
 
   private def limitInput(limit: Limit): Element =
-    val placeholderText = limit match {
-      case Limit.Min => "Lower inclusive limit..."
-      case Limit.Max => "Upper inclusive limit..."
-    }
-
-    val limitClass = if limit == Limit.Max then MAX_LIMIT else MIN_LIMIT
+    val placeholderText = s"${if limit == Limit.Min then "Lower" else "Upper"} inclusive limit..."
+    val limitClass      = if limit == Limit.Min then MIN_LIMIT else MAX_LIMIT
 
     input(
       `class`     := s"$limitClass $INPUT_CLASSES",

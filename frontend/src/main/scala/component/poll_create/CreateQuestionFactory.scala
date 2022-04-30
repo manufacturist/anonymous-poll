@@ -1,6 +1,6 @@
 package component.poll_create
 
-import component.{Component, baseButton}
+import component.*
 import entity.*
 import org.scalajs.dom.{Element, document}
 import scalatags.JsDom.all.*
@@ -31,7 +31,11 @@ object CreateQuestionFactory {
         }
       )("Delete question").render
 
-      val wrapper = div(id := questionWrapperId).render
+      val wrapper = div(
+        id                            := questionWrapperId,
+        attr(QUESTION_TYPE_ATTRIBUTE) := s"$questionType"
+      ).render
+
       wrapper.append(separator)
       wrapper.append(questionElement)
       wrapper.append(deleteButton)

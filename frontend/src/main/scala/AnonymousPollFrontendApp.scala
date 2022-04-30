@@ -15,7 +15,7 @@ object AnonymousPollFrontendApp extends ResourceApp.Simple {
     val appId      = "anonymous-poll-app"
     val appElement = document.getElementById(appId)
 
-    val pollApiClient = new PollApiClient(Uri.unsafeFromString("http://127.0.0.1:1337"))
+    val pollApiClient = new PollApiClient(Uri.unsafeFromString("http://192.168.0.24:1337"))
     val pageRenderer  = new PageRenderer(appElement, pollApiClient)
 
     // Initial rendering

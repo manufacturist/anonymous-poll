@@ -17,7 +17,7 @@ package object poll_create:
       case QuestionType.OpenEnd => "Your open-ended question..."
     }
 
-    div(
+    div(`class` := s"$QUESTION_CONTENT_CLASS")(
       textarea(
         `class`     := TEXT_AREA_CLASSES,
         placeholder := placeholderText

@@ -5,9 +5,10 @@ import cats.effect.implicits.*
 import cats.effect.unsafe.implicits.*
 import client.PollApiClient
 import component.*
-import component.answer.{QUESTION_NUMBER_ATTRIBUTE, QUESTION_TYPE_ATTRIBUTE}
+import component.answer.*
 import entity.*
 import entity.dto.{Answer, PollAnswer, PollView}
+import i18n.{I18N, I18NSupport}
 import org.scalajs.dom.{Element, MouseEvent, NodeList, URLSearchParams, document, html, window}
 import scalatags.JsDom.all.*
 
@@ -26,7 +27,7 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
   private lazy val (initialElement, voteCodeOp): (Element, IO[SingleUseVoteCode]) =
     Try(SingleUseVoteCode(UUID.fromString(queryParams.get(CODE_QUERY_PARAM)))) match {
       case Failure(exception) =>
-        val element = containerDiv(p("⚠️ You are missing the vote code. Unable to perform poll retrieval")).render
+        val element = containerDiv(p(I18NSupport.get(I18N.AnswerPoll.MISSING_CODE))).render
         (element, IO.raiseError(new RuntimeException("Couldn't read poll")))
       case Success(code) =>
         val element = containerDiv(div(`id` := CONTENT_ELEMENT_ID)(p("Loading poll..."))).render
@@ -44,12 +45,22 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
       val (updatedElement, maybePollView) = pollView match {
         case Some(pollView) =>
           val formWrapper = containerDiv().render
+
+          println(s"${I18NSupport.get(I18N.AnswerPoll.TITLE)} - ${pollView.name}")
+
           formWrapper.appendChild(
-            h2(`class` := "font-medium leading-tight text-4xl mt-0 mb-2")(s"\"${pollView.name}\" poll").render
+            h2(`class` := "font-medium leading-tight text-4xl mt-0 mb-2")(
+              String.format(I18NSupport.get(I18N.AnswerPoll.TITLE), pollView.name)
+            ).render
           )
+
           formWrapper.appendChild(new AnswerPollForm(pollView.questions).render)
           formWrapper.appendChild(br().render)
-          formWrapper.appendChild(p("Results can be viewed ", resultAnchor(pollView.id)("here")).render)
+
+          val resultsHereParagraph = p(I18NSupport.get(I18N.AnswerPoll.RESULTS_HERE)).render
+          resultsHereParagraph.appendChild(resultAnchor(pollView.id)(I18NSupport.get(I18N.AnswerPoll.HERE)).render)
+
+          formWrapper.appendChild(resultsHereParagraph)
 
           (formWrapper, Some(pollView))
         case None =>
@@ -105,9 +116,8 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
       .answerPoll(pollAnswer)
       .map(_ =>
         document.getElementById(CONTENT_ELEMENT_ID).innerHTML = p(
-          "Thank you for your answers!",
-          "Results can be viewed ",
-          resultAnchor(pollId)("here")
+          I18NSupport.get(I18N.AnswerPoll.ANSWERED),
+          resultAnchor(pollId)(I18NSupport.get(I18N.AnswerPoll.HERE))
         ).render.innerHTML
       )
       .unsafeRunAndForget()

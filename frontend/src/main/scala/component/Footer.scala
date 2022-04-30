@@ -16,7 +16,7 @@ object Footer extends Component {
                 href    := "https://github.com/manufacturist/anonymous-poll",
                 `class` := "hover:text-blue-200",
                 target  := "_blank"
-              )("\uD83D\uDC49\u00A0\u00A0\u00A0Code on GitHub")
+              )("\uD83D\uDC49\u00A0\u00A0Code on GitHub")
             )
           )
         )

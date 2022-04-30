@@ -4,6 +4,7 @@ import ciris.ConfigDecoder
 import entity.*
 import org.http4s.Uri
 
+import java.time.OffsetDateTime
 import scala.concurrent.duration.FiniteDuration
 
 final case class AppConfig(
@@ -11,6 +12,7 @@ final case class AppConfig(
   server: ServerConfig,
   frontendUris: FrontendUris,
   db: DatabaseConfig,
+  purge: PurgeConfig,
   emailTemplates: EmailTemplatesConfig,
   emailPort: EmailPortConfig
 )
@@ -45,6 +47,9 @@ sealed trait EmailConfig
 case class SMTPConfig(username: EmailAddress, password: String) extends EmailConfig
 end SMTPConfig
 
+case class MailChimpConfig() extends EmailConfig
+end MailChimpConfig
+
 case object NoOpEmailConfig extends EmailConfig
 end NoOpEmailConfig
 
@@ -53,6 +58,10 @@ case class EmailPortConfig(
   adapterConfig: EmailConfig
 )
 end EmailPortConfig
+
+case class PurgeConfig(
+  interval: FiniteDuration
+)
 
 case class DatabaseConfig(
   name: String,

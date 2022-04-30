@@ -4,6 +4,7 @@ import component.*
 import component.answer.QuestionComponent
 import entity.QuestionType
 import entity.dto.QuestionView
+import i18n.{I18N, I18NSupport}
 import org.scalajs.dom.Element
 import scalatags.JsDom.all.*
 
@@ -20,7 +21,7 @@ class AnswerPollForm(questions: List[QuestionView]) extends Component:
     val sendButton = baseButton(
       elementId = ANSWER_POLL_BUTTON_ID,
       classes = List("my-2 float-right")
-    )("Register answers").render
+    )(I18NSupport.get(I18N.AnswerPoll.ANSWER_BTN)).render
 
     pollAnswerForm.appendChild(questionsWrapper)
     pollAnswerForm.appendChild(sendButton)

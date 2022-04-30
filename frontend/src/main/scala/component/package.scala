@@ -4,7 +4,9 @@ import scalatags.JsDom.all.*
 
 package object component:
 
-  val ANSWER_POLL_BUTTON_ID = "answer-poll"
+  val ANSWER_POLL_BUTTON_ID   = "answer-poll"
+  val QUESTION_TYPE_ATTRIBUTE = "question-type"
+  val QUESTION_CONTENT_CLASS  = "question-content"
 
   val INPUT_CLASSES: String =
     """px-3 py-1.5 mr-3 my-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"""

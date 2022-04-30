@@ -7,6 +7,8 @@ import entity.*
 import entity.dao.*
 import entity.dto.*
 
+import java.time.OffsetDateTime
+
 object PollSql extends PollSql
 
 trait PollSql:
@@ -29,6 +31,9 @@ trait PollSql:
         )
       }.headOption)
 
+  def findPollOlderThan(date: OffsetDateTime): ConnectionIO[List[Poll]] =
+    PollQueries.selectPollWhereCreatedLowerThan(date).to[List]
+
   def deletePoll(pollId: PollId): ConnectionIO[Int] =
     PollQueries.deletePollWherePollId(eqPollId = pollId).run
 
@@ -44,6 +49,12 @@ private[query] object PollQueries extends Composites:
          |JOIN question AS q ON p.id = q.poll_id  
          |WHERE v.code = $eqCode
          |""".stripMargin.query[(PollId, PollName, QuestionView)]
+
+  def selectPollWhereCreatedLowerThan(date: OffsetDateTime): Query0[Poll] =
+    sql"""SELECT p.id, p.name, p.created
+         |FROM poll AS p
+         |WHERE p.created < $date
+         |""".stripMargin.query[Poll]
 
   def deletePollWherePollId(eqPollId: PollId): Update0 =
     sql"DELETE FROM poll WHERE id = $eqPollId".update

@@ -28,6 +28,11 @@ final class PollSqlSpec() extends TransactorFixtureSuite:
     check(PollQueries.selectPollWhereVoterCode(code))
   }
 
+  test("selectPollWhereCreatedLowerThan") {
+    val date = OffsetDateTime.MAX
+    check(PollQueries.selectPollWhereCreatedLowerThan(date))
+  }
+
   test("deletePollWherePollId") {
     check(PollQueries.deletePollWherePollId(pollId))
   }

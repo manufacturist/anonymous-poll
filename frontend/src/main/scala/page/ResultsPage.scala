@@ -6,9 +6,10 @@ import cats.effect.unsafe.IORuntime
 import cats.effect.unsafe.implicits.*
 import client.PollApiClient
 import component.*
-import component.answer.{QUESTION_NUMBER_ATTRIBUTE, QUESTION_TYPE_ATTRIBUTE}
+import component.answer.*
 import entity.*
-import entity.dto.{Answer, AnsweredQuestionView, PollAnswer, PollView}
+import entity.dto.*
+import i18n.*
 import org.scalajs.dom.*
 import scalatags.JsDom.all.*
 
@@ -28,7 +29,7 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
     Try(PollId(UUID.fromString(queryParams.get(POLL_ID_QUERY_PARAM)))) match {
       case Failure(exception) =>
         val element = containerDiv(
-          p("⚠️ You are missing the poll id. Unable to view the results")
+          p(I18NSupport.get(I18N.Home.IDEA_1))
         ).render
 
         (element, IO.raiseError(new RuntimeException("Couldn't read the pollId")))
@@ -59,8 +60,8 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
               table(
                 tbody(
                   tr(
-                    th(`class` := "text-left")("Response"),
-                    th("Votes")
+                    th(`class` := "text-left")(I18NSupport.get(I18N.ViewResults.RESPONSE)),
+                    th(I18NSupport.get(I18N.ViewResults.VOTES))
                   ),
                   results.toList.map { case (key, value) =>
                     tr(
@@ -76,7 +77,7 @@ class ResultsPage(pollApiClient: PollApiClient) extends Page:
           case AnsweredQuestionView.AnsweredNumberView(number, text, average) =>
             div(
               labelQuestion(s"$number. $text"),
-              p(s"Average $average"),
+              p(s"${I18NSupport.get(I18N.ViewResults.AVERAGE)} $average"),
               br()
             )
 

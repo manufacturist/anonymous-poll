@@ -11,6 +11,7 @@ import port.email.impl.GmailSMTPAdapter
 import com.comcast.ip4s.*
 import config.{*, given}
 import core.*
+import cron.PurgeJob
 import db.*
 import monix.newtypes.HasBuilder
 import org.http4s.ember.server.EmberServerBuilder
@@ -27,20 +28,21 @@ object AnonymousPollServer extends ResourceApp.Forever:
 
   def run(args: List[String]): Resource[IO, Unit] =
     for
-      logger <- Resource.eval(Slf4jLogger.create[IO])
-      config <- appConfigResource
+      logger    <- Resource.eval(Slf4jLogger.create[IO])
+      appConfig <- config.loadAppConfig()
 
       given Logger    = logger
-      given AppConfig = config
+      given AppConfig = appConfig
 
       given Supervisor[IO] <- Supervisor[IO]
-      given EmailPort      <- EmailPortFactory(config.emailPort)
-      given DbTransactor   <- DbTransactor.build(config.db)
+      given EmailPort      <- EmailPortFactory(appConfig.emailPort)
+      given DbTransactor   <- DbTransactor.build(appConfig.db)
 
       pollAlgebra: PollAlgebra <- Resource.eval(IO.pure(new PollAlgebraImpl(PollSql, VoterSql, QuestionSql)))
 
-      _ <- Migrator(config.db)
-      _ <- Seeder(config.env, pollAlgebra)
+      _ <- Migrator(appConfig.db)
+      _ <- Seeder(appConfig.env, pollAlgebra)
+      _ <- PurgeJob(PollSql, appConfig.purge)
 
       httpApp = {
         val pollRoutes: PollRoutes = new PollRoutes(pollAlgebra)
@@ -58,9 +60,9 @@ object AnonymousPollServer extends ResourceApp.Forever:
 
       server <- EmberServerBuilder
         .default[IO]
-        .withHostOption(Host.fromString(config.server.host))
-        .withPort(Port.fromInt(config.server.port).getOrElse(port"1337"))
+        .withHostOption(Host.fromString(appConfig.server.host))
+        .withPort(Port.fromInt(appConfig.server.port).getOrElse(port"1337"))
         .withHttpApp(httpApp)
-        .withShutdownTimeout(config.server.shutdownTimeout) // Default is 30[s] & this is bad for ITs
+        .withShutdownTimeout(appConfig.server.shutdownTimeout) // Default is 30[s] & this is bad for ITs
         .build
     yield ()
