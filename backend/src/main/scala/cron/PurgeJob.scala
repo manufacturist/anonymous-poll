@@ -7,23 +7,32 @@ import core.Logger
 import db.DbTransactor
 import doobie.*
 import doobie.free.connection.ConnectionIO
+import fs2.Stream
 import query.PollSql
 
 import java.time.{Instant, OffsetDateTime, ZoneOffset}
 
 final class PurgeJob(pollSql: PollSql, purgeConfig: PurgeConfig)(using logger: Logger, dbTransactor: DbTransactor):
   def run(): IO[Unit] =
+    Stream
+      .awakeEvery[IO](purgeConfig.interval)
+      .evalMap(_ => deleteOldPolls())
+      .compile
+      .drain
+
+  private def deleteOldPolls(): IO[Unit] =
     val doobieProgram = for {
       now <- Clock[ConnectionIO].realTime.map(rt =>
         OffsetDateTime.ofInstant(Instant.ofEpochMilli(rt.toMillis), ZoneOffset.UTC)
       )
 
-      polls <- pollSql.findPollOlderThan(now)
-      _     <- polls.map(poll => pollSql.deletePoll(poll.id)).sequence
-    } yield polls.size
+      deletedCount <- pollSql.deletePollsOlderThan(now)
+    } yield deletedCount
 
-    dbTransactor.interpret(doobieProgram).map(deletedCount => logger.info(s"Deleted $deletedCount polls"))
-      *> IO.sleep(purgeConfig.interval) *> run()
+    for
+      deletedCount <- dbTransactor.interpret(doobieProgram)
+      _            <- logger.info(s"Deleted $deletedCount polls")
+    yield ()
 
 object PurgeJob:
   def apply(pollSql: PollSql, purgeConfig: PurgeConfig)(using Logger, DbTransactor): Resource[IO, FiberIO[Unit]] =

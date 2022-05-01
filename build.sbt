@@ -53,11 +53,12 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
   .jsConfigure(
     _.enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
       .settings(
-        Compile / npmDependencies ++= List(
-          "tls" -> "0.0.1",
-          "net" -> "1.0.2",
-          "os"  -> "0.1.2"
-        ),
+          // Was required when fs2 was used on `frontend`
+//        Compile / npmDependencies ++= List(
+//          "tls" -> "0.0.1",
+//          "net" -> "1.0.2",
+//          "os"  -> "0.1.2"
+//        ),
         Dependencies.js
       )
   )

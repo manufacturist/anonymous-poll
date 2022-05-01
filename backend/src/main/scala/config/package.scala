@@ -1,5 +1,5 @@
 import cats.effect.*
-import ciris.*
+import ciris.{Secret as _, *}
 import entity.*
 import monix.newtypes.HasBuilder
 import org.http4s.Uri
@@ -102,8 +102,11 @@ package object config:
         case EmailPortStrategy.Gmail =>
           for
             gmailUsername <- env(EnvVars.GMAIL_USERNAME).as[EmailAddress].resource[IO]
-            gmailPassword <- env(EnvVars.GMAIL_PASSWORD).as[Password].resource[IO]
+            gmailPassword <- env(EnvVars.GMAIL_PASSWORD).as[Secret].resource[IO]
           yield SMTPConfig(gmailUsername, gmailPassword)
+
+        case EmailPortStrategy.MailChimp =>
+          env(EnvVars.MAILCHIMP_API_KEY).as[Secret].resource[IO].map(MailChimpConfig.apply)
 
         case EmailPortStrategy.NoOp =>
           Resource.eval(IO.pure(NoOpEmailConfig))

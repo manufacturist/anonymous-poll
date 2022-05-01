@@ -31,11 +31,8 @@ trait PollSql:
         )
       }.headOption)
 
-  def findPollOlderThan(date: OffsetDateTime): ConnectionIO[List[Poll]] =
-    PollQueries.selectPollWhereCreatedLowerThan(date).to[List]
-
-  def deletePoll(pollId: PollId): ConnectionIO[Int] =
-    PollQueries.deletePollWherePollId(eqPollId = pollId).run
+  def deletePollsOlderThan(date: OffsetDateTime): ConnectionIO[Int] =
+    PollQueries.deletePollsWhereCreatedLowerThan(date).run
 
 private[query] object PollQueries extends Composites:
   def insert(poll: Poll): Update0 =
@@ -43,18 +40,12 @@ private[query] object PollQueries extends Composites:
     sql"INSERT INTO poll (id, name, created_at) VALUES ($id, $name, $createdAt)".update
 
   def selectPollWhereVoterCode(eqCode: SingleUseVoteCode): Query0[(PollId, PollName, QuestionView)] =
-    sql"""SELECT p.id, p.name, q.number, q.type, q.text, q.picks, q.minimum, q.maximum, 
+    sql"""SELECT p.id, p.name, q.number, q.type, q.text, q.picks, q.minimum, q.maximum,
          |FROM poll AS p
          |JOIN voter AS v ON p.id = v.poll_id
-         |JOIN question AS q ON p.id = q.poll_id  
+         |JOIN question AS q ON p.id = q.poll_id
          |WHERE v.code = $eqCode
          |""".stripMargin.query[(PollId, PollName, QuestionView)]
 
-  def selectPollWhereCreatedLowerThan(date: OffsetDateTime): Query0[Poll] =
-    sql"""SELECT p.id, p.name, p.created
-         |FROM poll AS p
-         |WHERE p.created < $date
-         |""".stripMargin.query[Poll]
-
-  def deletePollWherePollId(eqPollId: PollId): Update0 =
-    sql"DELETE FROM poll WHERE id = $eqPollId".update
+  def deletePollsWhereCreatedLowerThan(date: OffsetDateTime): Update0 =
+    sql"DELETE FROM poll WHERE created_at < $date".stripMargin.update

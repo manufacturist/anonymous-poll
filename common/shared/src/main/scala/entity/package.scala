@@ -19,8 +19,8 @@ package object entity:
   object Text extends NewsubtypeWrapped[String]
   type Text = Text.Type
 
-  object Password extends NewsubtypeWrapped[String]
-  type Password = Password.Type
+  object Secret extends NewsubtypeWrapped[String]
+  type Secret = Secret.Type
 
   object EmailAddress extends NewsubtypeWrapped[String]
   type EmailAddress = EmailAddress.Type

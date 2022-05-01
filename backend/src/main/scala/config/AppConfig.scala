@@ -36,7 +36,7 @@ case class EmailTemplatesConfig(inviteToPollSubject: SubjectTemplate, inviteToPo
 end EmailTemplatesConfig
 
 enum EmailPortStrategy:
-  case Gmail, NoOp
+  case Gmail, MailChimp, NoOp
 
 object EmailPortStrategy:
   given ConfigDecoder[String, EmailPortStrategy] =
@@ -44,10 +44,10 @@ object EmailPortStrategy:
 
 sealed trait EmailConfig
 
-case class SMTPConfig(username: EmailAddress, password: String) extends EmailConfig
+case class SMTPConfig(username: EmailAddress, password: Secret) extends EmailConfig
 end SMTPConfig
 
-case class MailChimpConfig() extends EmailConfig
+case class MailChimpConfig(apiKey: Secret) extends EmailConfig
 end MailChimpConfig
 
 case object NoOpEmailConfig extends EmailConfig
