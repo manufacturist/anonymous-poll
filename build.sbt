@@ -1,10 +1,8 @@
-import sbt.Compile
 import scalajsbundler.sbtplugin.ScalaJSBundlerPlugin.autoImport.webpackEmitSourceMaps
-import webscalajs.WebScalaJS.autoImport.scalaJSProjects
 
 lazy val root = project
   .in(file("."))
-  .aggregate(common.jvm, common.js, backend, frontend, frontendCompile)
+  .aggregate(common.jvm, common.js, backend, frontend)
   .settings(
     name    := "anonymous-poll",
     version := "0.0.1"
@@ -22,16 +20,6 @@ lazy val backend = project
     IntegrationTest / parallelExecution := false // Sequential suites, parallel tests execution
   )
   .dependsOn(common.jvm)
-
-lazy val frontendCompile = project
-  .enablePlugins(WebScalaJSBundlerPlugin)
-  .in(file("./frontend-output"))
-  .settings(
-    scalaJSProjects         := Seq(frontend),
-    Assets / pipelineStages := Seq(scalaJSPipeline),
-    // triggers scalaJSPipeline when using compile or continuous compilation
-    Compile / compile := ((Compile / compile) dependsOn scalaJSPipeline).value
-  )
 
 lazy val frontend = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, WebScalaJSBundlerPlugin, JSDependenciesPlugin)
