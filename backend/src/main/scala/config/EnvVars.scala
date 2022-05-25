@@ -1,7 +1,6 @@
 package config
 
-object EnvVars:
-  val SERVER_ENVIRONMENT      = "SERVER_ENVIRONMENT"
+object EnvVars extends CommonEnvVars:
   val SERVER_HOST             = "SERVER_HOST"
   val SERVER_PORT             = "SERVER_PORT"
   val SERVER_SHUTDOWN_TIMEOUT = "SERVER_SHUTDOWN_TIMEOUT"

@@ -18,9 +18,6 @@ final case class AppConfig(
 )
 end AppConfig
 
-enum Environment:
-  case LOCAL, DEV, STG, PROD
-
 case class ServerConfig(host: String, port: Int, shutdownTimeout: FiniteDuration):
   override def toString: String = s"$host:$port"
 

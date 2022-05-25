@@ -2,7 +2,7 @@ import sbt._
 import sbt.Keys._
 import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 
-object Dependencies {
+object Libraries {
   val catsV            = "3.3.11"
   val circeV           = "0.14.1"
   val cirisV           = "2.3.2"
@@ -86,5 +86,9 @@ object Dependencies {
     "org.scala-js"                 %%% "scalajs-dom" % scalaJsDomV withSources (),
     "com.lihaoyi"                  %%% "scalatags"   % scalaTagsV withSources (),
     "com.github.japgolly.scalacss" %%% "core"        % scalaCssV withSources ()
+  )
+
+  def html = libraryDependencies ++= Seq(
+    "com.lihaoyi" %%% "scalatags" % scalaTagsV withSources ()
   )
 }

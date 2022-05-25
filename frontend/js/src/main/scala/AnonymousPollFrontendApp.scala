@@ -1,11 +1,10 @@
 import cats.effect.*
 import client.PollApiClient
-import component.*
+import page.PageRenderer
 import org.http4s.Uri
 import org.http4s.client.Client
-import org.http4s.dom.*
+import org.http4s.dom.FetchClientBuilder
 import org.scalajs.dom.*
-import page.PageRenderer
 
 object AnonymousPollFrontendApp extends ResourceApp.Simple {
 

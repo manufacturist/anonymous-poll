@@ -59,7 +59,7 @@ package object config:
 
   def loadAppConfig(): Resource[IO, AppConfig] =
     for
-      environment <- env(EnvVars.SERVER_ENVIRONMENT)
+      environment <- env(EnvVars.ENVIRONMENT)
         .map(Environment.valueOf)
         .default(localAppConfig.env)
         .resource[IO]
