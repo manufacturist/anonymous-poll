@@ -10,40 +10,39 @@
 This project represents an anonymous poll solution. One can:
 
 * Create polls with 3 different kind of questions (`Number`, `Choice`, `OpenEnd`)
-* Invite voters via email 
+* Invite voters via email using Gmail or MailChimp (TODO)
 * Offers a results link
 * Optionally provide weights to each individual invited voter (TODO)
-  * 
 
 All data lives in-memory and nothing is stored forever, since [H2](https://www.h2database.com/html/main.html) is
 used as a main data store. On every server restart or every couple of days (cron job), the data is wiped clean.
 
 ### Tech stack
 
-| Library             | Description                                     |
-|---------------------|-------------------------------------------------|
-| cats-effect-3       | Functional goodies                              |
-| munit-cats-effect-3 | Testing                                         |
-| http4s              | HTTP Server / Client                            |
-| tapir               | HTTP API server, client & documentation wrapper |
-| scalajs             | What is says on the tin                         |
-| scalatags           | HTML                                            |
-| scalacss            | CSS                                             |
-| h2                  | In-memory database                              |
-| doobie              | SQL library                                     |
-| flywaydb            | Database migration                              | 
-| ciris               | Configuration                                   |
-| log4cats            | Logging                                         |
-| circe               | JSON                                            |
-| newtypes            | Type aliases                                    |
+| Library                                                               | Description                                                                    |
+|-----------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| [cats-effect-3](https://typelevel.org/cats-effect/docs/concepts)      | :exclamation-mark: Typelevel :goat: :exclamation-mark: <br> Functional goodies |
+| [munit-cats-effect-3](https://github.com/typelevel/munit-cats-effect) | Testing                                                                        |
+| [http4s](https://http4s.org/v0.23/docs/quickstart.html)               | HTTP Server / Client                                                           |
+| [tapir](https://tapir.softwaremill.com/en/latest/)                    | HTTP API server, client & documentation wrapper                                |
+| [scalajs](https://www.scala-js.org/)                                  | What is says on the tin                                                        |
+| [scalatags](https://com-lihaoyi.github.io/scalatags/)                 | HTML                                                                           |
+| [scalacss](https://japgolly.github.io/scalacss/book/)                 | CSS                                                                            |
+| [h2](https://www.h2database.com/html/main.html)                       | In-memory database                                                             |
+| [doobie](https://tpolecat.github.io/doobie/)                          | SQL library                                                                    |
+| [flywaydb](https://flywaydb.org/documentation/)                       | Database migration                                                             |
+| [ciris](https://cir.is/)                                              | Configuration                                                                  |
+| [log4cats](https://typelevel.org/log4cats/)                           | Logging                                                                        |
+| [circe](https://circe.github.io/circe/)                               | JSON                                                                           |
+| [newtypes](https://newtypes.monix.io/docs/motivation.html)            | Type-safe aliases                                                              |
 
-| Plugin                   | Description                                                         |
-|--------------------------|---------------------------------------------------------------------|
-| sbt-scalajs              | Compiling, running and testing with Scala.js                        |
-| sbt-scalajs-crossproject | Cross-platform compilation support for sbt (Scala, ScalaJS, Native) |
-| sbt-web-scalajs          | fastOptJS / fullLinkJS                                              |
-| sbt-web-scalajs-bundler  | npm / webpack                                                       |
-| sbt-hepek                | Generates files from Scala code (used for index.html at build step) |
+| Plugin                                                                                        | Description                                                         |
+|-----------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| [sbt-scalajs](http://www.scala-js.org/doc/sbt-plugin.html)                                    | Compiling, running and testing with Scala.js                        |
+| [sbt-scalajs-crossproject](https://github.com/portable-scala/sbt-crossproject)                | Cross-platform compilation support for sbt Scala & ScalaJS          |
+| [sbt-web-scalajs](https://github.com/vmunier/sbt-web-scalajs)                                 | fastOptJS / fullLinkJS                                              |
+| [sbt-web-scalajs-bundler](https://scalacenter.github.io/scalajs-bundler/getting-started.html) | npm / webpack                                                       |
+| [sbt-hepek](https://github.com/sake92/sbt-hepek)                                              | Generates files from Scala code (used for index.html at build step) |
 
 *^I'm still in the dark when it comes to how people do Scala.js development; if any of these 
 plugins are obsolete or no longer used, please open a PR* 
@@ -72,7 +71,7 @@ cd frontend && python -m http.server
 
 ### Personal notes
 
-Subjected to random updates over time :shrug: :
+Subjected to random updates over time:
 
 * DRY can be extended to frontend as well now, since there's no need to write any TS/JS definitions for types, objects
   or API calls *(2022.07.02)*
