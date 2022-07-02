@@ -37,7 +37,7 @@ lazy val frontendCompile = project
 lazy val frontend = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .jsConfigure {
-    _.enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, WebScalaJSBundlerPlugin, JSDependenciesPlugin)
+    _.enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, WebScalaJSBundlerPlugin)
       .settings(
         Libraries.js,
         scalaJSUseMainModuleInitializer := true,
