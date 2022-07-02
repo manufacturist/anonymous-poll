@@ -8,7 +8,6 @@
 ### What does it do?
 
 This project represents an anonymous poll solution. One can:
-
 * Create polls with 3 types of questions (`Number`, `Choice`, `OpenEnd`)
 * Invite voters via email using Gmail or MailChimp (TODO)
 * Offers a results link
@@ -20,22 +19,22 @@ used as a main data store. On every server restart or every couple of days (cron
 
 ### Tech stack
 
-| Library                                                               | Description                                                                    |
-|-----------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| Library                                                               | Description                                              |
+|-----------------------------------------------------------------------|----------------------------------------------------------|
 | [cats-effect-3](https://typelevel.org/cats-effect/docs/concepts)      | :heart: Typelevel :goat: :heart: <br> Functional goodies |
-| [munit-cats-effect-3](https://github.com/typelevel/munit-cats-effect) | Testing                                                                        |
-| [http4s](https://http4s.org/v0.23/docs/quickstart.html)               | HTTP Server / Client                                                           |
-| [tapir](https://tapir.softwaremill.com/en/latest/)                    | HTTP API server, client & documentation wrapper                                |
-| [scalajs](https://www.scala-js.org/)                                  | What is says on the tin                                                        |
-| [scalatags](https://com-lihaoyi.github.io/scalatags/)                 | HTML                                                                           |
-| [scalacss](https://japgolly.github.io/scalacss/book/)                 | CSS                                                                            |
-| [h2](https://www.h2database.com/html/main.html)                       | In-memory database                                                             |
-| [doobie](https://tpolecat.github.io/doobie/)                          | SQL library                                                                    |
-| [flywaydb](https://flywaydb.org/documentation/)                       | Database migration                                                             |
-| [ciris](https://cir.is/)                                              | Configuration                                                                  |
-| [log4cats](https://typelevel.org/log4cats/)                           | Logging                                                                        |
-| [circe](https://circe.github.io/circe/)                               | JSON                                                                           |
-| [newtypes](https://newtypes.monix.io/docs/motivation.html)            | Type-safe aliases                                                              |
+| [munit-cats-effect-3](https://github.com/typelevel/munit-cats-effect) | Testing                                                  |
+| [http4s](https://http4s.org/v0.23/docs/quickstart.html)               | HTTP Server / Client                                     |
+| [tapir](https://tapir.softwaremill.com/en/latest/)                    | HTTP API server, client & documentation wrapper          |
+| [scalajs](https://www.scala-js.org/)                                  | What is says on the tin                                  |
+| [scalatags](https://com-lihaoyi.github.io/scalatags/)                 | HTML                                                     |
+| [scalacss](https://japgolly.github.io/scalacss/book/)                 | CSS                                                      |
+| [h2](https://www.h2database.com/html/main.html)                       | In-memory database                                       |
+| [doobie](https://tpolecat.github.io/doobie/)                          | SQL library                                              |
+| [flywaydb](https://flywaydb.org/documentation/)                       | Database migration                                       |
+| [ciris](https://cir.is/)                                              | Configuration                                            |
+| [log4cats](https://typelevel.org/log4cats/)                           | Logging                                                  |
+| [circe](https://circe.github.io/circe/)                               | JSON                                                     |
+| [newtypes](https://newtypes.monix.io/docs/motivation.html)            | Type-safe aliases                                        |
 
 | Plugin                                                                                        | Description                                                         |
 |-----------------------------------------------------------------------------------------------|---------------------------------------------------------------------|

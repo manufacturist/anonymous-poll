@@ -16,7 +16,9 @@ trait VoterSql:
     VoterQueries.selectVoterByCodeWhere(eqCode = code).option
 
 private[query] object VoterQueries extends Composites:
-  val insert: Update[Voter] = Update[Voter]("INSERT INTO voter (code, poll_id, email_address) VALUES (?, ?, ?)")
+  val insert: Update[Voter] = Update[Voter](
+    "INSERT INTO voter (code, poll_id, email_address, vote_weight) VALUES (?, ?, ?, ?)"
+  )
 
   def selectVoterByCodeWhere(eqCode: SingleUseVoteCode): Query0[Voter] =
     sql"SELECT * FROM voter WHERE code = $eqCode".query

@@ -21,6 +21,11 @@ package object entity:
 
   object Secret extends NewsubtypeWrapped[String]
   type Secret = Secret.Type
+  
+  type VoteWeight = VoteWeight.Type
+  object VoteWeight extends NewsubtypeWrapped[Double] {
+    def democracy: VoteWeight = VoteWeight(1.0d)
+  }
 
   object EmailAddress extends NewsubtypeWrapped[String]
   type EmailAddress = EmailAddress.Type

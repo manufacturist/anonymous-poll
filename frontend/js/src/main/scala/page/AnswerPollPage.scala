@@ -28,7 +28,7 @@ class AnswerPollPage(pollApiClient: PollApiClient) extends Page:
     Try(SingleUseVoteCode(UUID.fromString(queryParams.get(CODE_QUERY_PARAM)))) match {
       case Failure(exception) =>
         val element = containerDiv(p(I18NSupport.get(I18N.AnswerPoll.MISSING_CODE))).render
-        (element, IO.raiseError(new RuntimeException("Couldn't read poll")))
+        (element, IO.raiseError(new RuntimeException("Couldn't read poll", exception)))
       case Success(code) =>
         val element = containerDiv(div(`id` := CONTENT_ELEMENT_ID)(p("Loading poll..."))).render
         (element, IO.pure(code))

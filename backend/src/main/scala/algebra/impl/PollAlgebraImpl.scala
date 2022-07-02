@@ -42,7 +42,7 @@ class PollAlgebraImpl(
     for
       pollId <- UUIDGen[IO].randomUUID.map(PollId(_))
       now <- Clock[IO].realTime.map(rt => OffsetDateTime.ofInstant(Instant.ofEpochMilli(rt.toMillis), ZoneOffset.UTC))
-      newVoterCodes <- poll.recipients.toList.traverse(_ => UUIDGen[IO].randomUUID.map(SingleUseVoteCode(_)))
+      newVoterCodes <- poll.recipients.traverse(_ => UUIDGen[IO].randomUUID.map(SingleUseVoteCode(_)))
 
       newPoll = Poll(
         id = pollId,
@@ -52,19 +52,20 @@ class PollAlgebraImpl(
 
       newPollVoters = newVoterCodes
         .zip(poll.recipients)
-        .map { (code, emailAddress) =>
+        .map { (code, recipient) =>
           Voter(
             code = code,
             pollId = pollId,
-            emailAddress = emailAddress
+            emailAddress = recipient.emailAddress,
+            voteWeight = recipient.voteWeight.getOrElse(VoteWeight.democracy)
           )
         }
 
       newQuestions = poll.questions.zipWithIndex.map { (question, index) =>
         val (questionType, picks, minimum, maximum) = question match {
-          case QuestionDto.Choice(text, answers, isMultiPick) => (QuestionType.Choice, answers, None, None)
-          case QuestionDto.Number(text, minimum, maximum)     => (QuestionType.Number, Nil, minimum, maximum)
-          case QuestionDto.OpenEnd(text)                      => (QuestionType.OpenEnd, Nil, None, None)
+          case QuestionDto.Choice(_, answers, _)       => (QuestionType.Choice, answers, None, None)
+          case QuestionDto.Number(_, minimum, maximum) => (QuestionType.Number, Nil, minimum, maximum)
+          case QuestionDto.OpenEnd(_)                  => (QuestionType.OpenEnd, Nil, None, None)
         }
 
         Question(

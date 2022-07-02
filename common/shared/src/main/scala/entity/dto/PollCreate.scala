@@ -5,7 +5,7 @@ import entity.*
 
 case class PollCreate(
   name: PollName,
-  recipients: Set[EmailAddress],
+  recipients: List[PollRecipient],
   questions: List[Question]
 )
 

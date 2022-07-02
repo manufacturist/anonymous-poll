@@ -5,5 +5,6 @@ import entity.*
 case class Voter(
   code: SingleUseVoteCode,
   pollId: PollId,
-  emailAddress: EmailAddress
+  emailAddress: EmailAddress,
+  voteWeight: VoteWeight
 )

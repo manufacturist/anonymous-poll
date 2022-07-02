@@ -6,7 +6,7 @@ import client.PollApiClient
 import component.*
 import component.poll_create.*
 import entity.*
-import entity.dto.{PollCreate, Question}
+import entity.dto.{PollCreate, PollRecipient, Question}
 import org.scalajs.dom.{Text as _, *}
 import scalatags.JsDom.all.*
 
@@ -16,11 +16,14 @@ class CreatePollPage(pollApiClient: PollApiClient) extends Page:
 
   private val FORM_ID         = "create-poll-form"
   private val POLL_NAME_ID    = "poll-name-id"
-  private val EMAILS_ID       = "emails-text-area"
+  private val RECIPIENT_ID    = "emails-weights-text-area"
   private val ADD_CHOICE_ID   = "add-choice"
   private val ADD_NUMBER_ID   = "add-number"
   private val ADD_OPEN_END_ID = "add-open-end"
   private val CREATE_POLL_ID  = "create-poll"
+
+  private val emailRegex =
+    """[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?""".r
 
   override def renderElement: Element =
     val choiceButton     = baseButton(ADD_CHOICE_ID)("Add choice question")
@@ -40,9 +43,9 @@ class CreatePollPage(pollApiClient: PollApiClient) extends Page:
           ),
           div(`class` := "col-span-4")(
             textarea(
-              id          := EMAILS_ID,
-              `class`     := TEXT_AREA_CLASSES,
-              placeholder := "foo@bar.baz, wibble@wobble.wuuble, etc..."
+              id      := RECIPIENT_ID,
+              `class` := TEXT_AREA_CLASSES,
+              placeholder := "Specify emails separated by new lines:\nfoo@bar.baz\nwibble@wobble.wuuble\n\nOR specify emails & assigned vote weight:\n\nfoo@bar.baz,1.5\nwibble@wobble.wubble"
             )
           ),
           div(`class` := "col-span-3 space-x-4")(
@@ -92,8 +95,27 @@ class CreatePollPage(pollApiClient: PollApiClient) extends Page:
       pollName <- IO.delay(PollName(document.getElementById(POLL_NAME_ID).asInstanceOf[HTMLInputElement].value))
 
       emails <- IO.delay {
-        val emailsText = document.getElementById(EMAILS_ID).asInstanceOf[HTMLTextAreaElement].value
-        emailsText.filterNot(_.isWhitespace).split(",").map(EmailAddress(_)).toSet
+        val recipientsText = document.getElementById(RECIPIENT_ID).asInstanceOf[HTMLTextAreaElement].value
+
+        recipientsText
+          .split('\n')
+          .map(_.replaceAll("""\s""", ""))
+          .filter(_.isBlank)
+          .map {
+            case line if line.contains(",") && line.split(",").length == 2 =>
+              val split        = line.split(",")
+              val emailAddress = EmailAddress(split.head)
+              val voteWeight   = VoteWeight(split(1).toDouble)
+
+              PollRecipient(emailAddress, Some(voteWeight))
+
+            case emailRegex(emailAddress) =>
+              PollRecipient(EmailAddress(emailAddress), None)
+
+            case line =>
+              throw new RuntimeException(s"Can't parse '$line' :(")
+          }
+          .toList
       }
 
       questions <- retrievePollQuestions

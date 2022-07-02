@@ -1,13 +1,13 @@
 package scaffold
 
 import algebra.PollAlgebra
-import core.Logger
-import client.PollApiClient
-import org.http4s.client.Client
 import cats.effect.*
 import config.Environment
-import entity.dto.{PollCreate, Question}
-import entity.{EmailAddress, PollName, Text}
+import core.Logger
+import client.PollApiClient
+import entity.*
+import entity.dto.*
+import org.http4s.client.Client
 
 final class Seeder(pollAlgebra: PollAlgebra)(using Logger) {
 
@@ -20,10 +20,10 @@ final class Seeder(pollAlgebra: PollAlgebra)(using Logger) {
       // Taken from the ITs fixtures
       pollCreate: PollCreate = PollCreate(
         name = PollName("Typelevel Steering Committee Members"),
-        recipients = Set(
-          EmailAddress("scala1@sca.la"),
-          EmailAddress("scala2@sca.la"),
-          EmailAddress("scala3@sca.la")
+        recipients = List(
+          PollRecipient(EmailAddress("scala1@sca.la"), None),
+          PollRecipient(EmailAddress("scala2@sca.la"), None),
+          PollRecipient(EmailAddress("scala3@sca.la"), None)
         ),
         questions = List(
           Question.Choice(
@@ -43,7 +43,7 @@ final class Seeder(pollAlgebra: PollAlgebra)(using Logger) {
           Question.OpenEnd(
             text = Text(
               "If you were to recommend any functional Scala framework to a friend, " +
-                "how long would it take him / her / them to learn CE3?"
+                "how long would it take them to learn CE3?"
             )
           )
         )
