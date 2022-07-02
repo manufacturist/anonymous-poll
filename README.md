@@ -9,10 +9,11 @@
 
 This project represents an anonymous poll solution. One can:
 
-* Create polls with 3 different kind of questions (`Number`, `Choice`, `OpenEnd`)
+* Create polls with 3 types of questions (`Number`, `Choice`, `OpenEnd`)
 * Invite voters via email using Gmail or MailChimp (TODO)
 * Offers a results link
 * Optionally provide weights to each individual invited voter (TODO)
+* Get export via CSV (TODO)
 
 All data lives in-memory and nothing is stored forever, since [H2](https://www.h2database.com/html/main.html) is
 used as a main data store. On every server restart or every couple of days (cron job), the data is wiped clean.
@@ -21,7 +22,7 @@ used as a main data store. On every server restart or every couple of days (cron
 
 | Library                                                               | Description                                                                    |
 |-----------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| [cats-effect-3](https://typelevel.org/cats-effect/docs/concepts)      | :exclamation-mark: Typelevel :goat: :exclamation-mark: <br> Functional goodies |
+| [cats-effect-3](https://typelevel.org/cats-effect/docs/concepts)      | :heart: Typelevel :goat: :heart: <br> Functional goodies |
 | [munit-cats-effect-3](https://github.com/typelevel/munit-cats-effect) | Testing                                                                        |
 | [http4s](https://http4s.org/v0.23/docs/quickstart.html)               | HTTP Server / Client                                                           |
 | [tapir](https://tapir.softwaremill.com/en/latest/)                    | HTTP API server, client & documentation wrapper                                |
