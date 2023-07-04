@@ -1,3 +1,6 @@
+## ❗ This project has been abandoned. Use Laminar, instead of this AngularJS based approach. It was an experimental project and it served its purpose before I could bring it to completion (the purpose of learning). It doesn't compile because I left it in a refactoring state
+
+
 ### Table of Contents
 
 * [What does it do?](#what-does-it-do)
